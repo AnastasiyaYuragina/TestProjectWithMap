@@ -24,6 +24,8 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import java.util.Observer;
+
 public class MainActivity extends AppCompatActivity implements CountryFragment.OnListFragmentInteractionListener {
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -130,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements CountryFragment.O
         if (type.equals(FragmentType.COUNTRY_LIST)) {
             transaction.replace(R.id.container, fragment, type.name()).commit();
             CountryFragment countryFragment = (CountryFragment) fragment;
-            countryFragment.getPresenter();
+            receiver.getObserver().addObserver((Observer) countryFragment.getPresenter());
         }
     }
 

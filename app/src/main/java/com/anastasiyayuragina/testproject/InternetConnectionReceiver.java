@@ -14,6 +14,11 @@ import android.widget.Toast;
  */
 public class InternetConnectionReceiver extends BroadcastReceiver {
     private String TAG = "MyLogs";
+
+    public InternetConnectionObserver getObserver() {
+        return observer;
+    }
+
     private InternetConnectionObserver observer = new InternetConnectionObserver();
 
     @Override
