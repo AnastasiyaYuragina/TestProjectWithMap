@@ -1,5 +1,7 @@
 package com.anastasiyayuragina.testproject;
 
+import com.anastasiyayuragina.testproject.ourDataBase.ItemCountry;
+
 import java.util.Map;
 
 import retrofit2.Call;

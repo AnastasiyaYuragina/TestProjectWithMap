@@ -1,6 +1,6 @@
 package com.anastasiyayuragina.testproject.screen.country_list;
 
-import com.anastasiyayuragina.testproject.ItemCountry;
+import com.anastasiyayuragina.testproject.ourDataBase.ItemCountry;
 import com.anastasiyayuragina.testproject.jsonCountriesClasses.Country;
 import java.util.List;
 

@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.anastasiyayuragina.testproject.ItemForMap;
+import com.anastasiyayuragina.testproject.ourDataBase.ItemForMap;
 import com.anastasiyayuragina.testproject.R;
 import com.anastasiyayuragina.testproject.ourDataBase.CountryComment;
 import com.google.android.gms.maps.CameraUpdateFactory;

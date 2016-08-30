@@ -2,6 +2,8 @@ package com.anastasiyayuragina.testproject.screen.country_list;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -10,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 import com.anastasiyayuragina.testproject.EndlessRecyclerOnScrollListener;
 import com.anastasiyayuragina.testproject.jsonCountriesClasses.Country;
 import com.anastasiyayuragina.testproject.MyCountryRecyclerViewAdapter;
@@ -31,6 +34,11 @@ public class CountryFragment extends Fragment implements CountriesMvp.View {
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
     private MyCountryRecyclerViewAdapter adapter;
+
+    public CountriesMvp.Presenter getPresenter() {
+        return presenter;
+    }
+
     private CountriesMvp.Presenter presenter;
     private ProgressDialog progressDialog;
 
@@ -57,8 +65,6 @@ public class CountryFragment extends Fragment implements CountriesMvp.View {
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
-
-
     }
 
     @Override
@@ -82,9 +88,14 @@ public class CountryFragment extends Fragment implements CountriesMvp.View {
 
             progressDialog = new ProgressDialog(context);
             if (!presenter.isDataLoaded()) {
-                progressDialog.setProgressStyle(R.layout.progress_bar_item);
-                progressDialog.show();
-                presenter.loadData();
+                if (!isInternetConnection(context)) {
+                    Toast.makeText(context, "no internet", Toast.LENGTH_SHORT).show();
+                } else {
+                    progressDialog.setProgressStyle(R.layout.progress_bar_item);
+                    progressDialog.setMessage("");
+                    progressDialog.show();
+                    presenter.loadData();
+                }
             }
 
             recyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener((LinearLayoutManager) recyclerView.getLayoutManager()) {
@@ -99,6 +110,18 @@ public class CountryFragment extends Fragment implements CountriesMvp.View {
         }
 
         return view;
+    }
+
+    private boolean isInternetConnection(Context context) {
+        boolean isConnected = false;
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+
+        if (activeNetwork != null) {
+            isConnected = activeNetwork.isConnectedOrConnecting();
+        }
+
+        return isConnected;
     }
 
     @Override

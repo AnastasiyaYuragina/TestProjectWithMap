@@ -15,7 +15,7 @@ public class MyApplication extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
 
-        MySingleton.initInstance();
+        MyRetrofitSingleton.getInstance();
         FlowManager.init(new FlowConfig.Builder(this).build());
 
     }

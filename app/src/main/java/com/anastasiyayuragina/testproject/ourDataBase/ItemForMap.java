@@ -1,4 +1,4 @@
-package com.anastasiyayuragina.testproject;
+package com.anastasiyayuragina.testproject.ourDataBase;
 
 import com.anastasiyayuragina.testproject.jsonInfoForMapClasses.InfoForMap;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;

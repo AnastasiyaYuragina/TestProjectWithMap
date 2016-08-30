@@ -1,5 +1,6 @@
 package com.anastasiyayuragina.testproject;
 
+import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -89,7 +90,13 @@ public class MyCountryRecyclerViewAdapter extends RecyclerView.Adapter<MyCountry
 
     public void setLoading(boolean loading) {
         this.loading = loading;
-        notifyDataSetChanged();
+
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                notifyDataSetChanged();
+            }
+        });
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

@@ -1,6 +1,6 @@
 package com.anastasiyayuragina.testproject.screen.map;
 
-import com.anastasiyayuragina.testproject.ItemForMap;
+import com.anastasiyayuragina.testproject.ourDataBase.ItemForMap;
 
 /**
  * Created by anastasiyayuragina on 8/10/16.

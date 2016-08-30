@@ -1,21 +1,22 @@
 package com.anastasiyayuragina.testproject.screen.country_list;
 
 import android.support.v4.util.ArrayMap;
-import android.util.Log;
-import com.anastasiyayuragina.testproject.ItemCountry;
+
+import com.anastasiyayuragina.testproject.ourDataBase.ItemCountry;
 import com.anastasiyayuragina.testproject.jsonCountriesClasses.Country;
 import com.anastasiyayuragina.testproject.ourDataBase.CountryComment;
 import com.anastasiyayuragina.testproject.ourDataBase.CountryComment_Table;
 import com.raizlabs.android.dbflow.sql.language.Select;
 import java.util.List;
 import java.util.Map;
-
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Created by anastasiyayuragina on 8/2/16.
  *
  */
-public class CountriesPresenter implements CountriesMvp.Presenter, CountriesMvp.Model.OnDataLoaded {
+public class CountriesPresenter implements CountriesMvp.Presenter, CountriesMvp.Model.OnDataLoaded, Observer {
 
     private CountriesMvp.Model model;
     private CountriesMvp.View view;
@@ -71,5 +72,10 @@ public class CountriesPresenter implements CountriesMvp.Presenter, CountriesMvp.
 
     public boolean isDataLoaded() {
         return dataLoaded;
+    }
+
+    @Override
+    public void update(Observable observable, Object o) {
+        loadData();
     }
 }

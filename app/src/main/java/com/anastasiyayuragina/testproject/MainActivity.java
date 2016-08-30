@@ -1,6 +1,9 @@
 package com.anastasiyayuragina.testproject;
 
+import android.content.Context;
+import android.content.IntentFilter;
 import android.net.Uri;
+import android.net.wifi.WifiManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.PagerAdapter;
@@ -28,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements CountryFragment.O
      */
     private GoogleApiClient client;
     private FragmentManager manager;
+    private InternetConnectionReceiver receiver;
 
     /**
      * The {@link PagerAdapter} that will provide
@@ -76,6 +80,19 @@ public class MainActivity extends AppCompatActivity implements CountryFragment.O
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        receiver = new InternetConnectionReceiver();
+        registerReceiver(receiver, new IntentFilter(Context.CONNECTIVITY_SERVICE));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(receiver);
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
 
@@ -112,6 +129,8 @@ public class MainActivity extends AppCompatActivity implements CountryFragment.O
         FragmentTransaction transaction = manager.beginTransaction();
         if (type.equals(FragmentType.COUNTRY_LIST)) {
             transaction.replace(R.id.container, fragment, type.name()).commit();
+            CountryFragment countryFragment = (CountryFragment) fragment;
+            countryFragment.getPresenter();
         }
     }
 

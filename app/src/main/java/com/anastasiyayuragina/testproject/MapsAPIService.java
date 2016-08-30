@@ -1,5 +1,7 @@
 package com.anastasiyayuragina.testproject;
 
+import com.anastasiyayuragina.testproject.ourDataBase.ItemForMap;
+
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;

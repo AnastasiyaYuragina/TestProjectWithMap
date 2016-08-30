@@ -2,8 +2,8 @@ package com.anastasiyayuragina.testproject.screen.country_list;
 
 import android.support.v4.util.ArrayMap;
 import com.anastasiyayuragina.testproject.CountriesAPIService;
-import com.anastasiyayuragina.testproject.ItemCountry;
-import com.anastasiyayuragina.testproject.MySingleton;
+import com.anastasiyayuragina.testproject.ourDataBase.ItemCountry;
+import com.anastasiyayuragina.testproject.MyRetrofitSingleton;
 import java.util.Map;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -17,7 +17,7 @@ public class CountriesModel implements CountriesMvp.Model {
 
     @Override
     public void loadData(int page, final OnDataLoaded listener) {
-        MySingleton ms = MySingleton.getInstance();
+        MyRetrofitSingleton ms = MyRetrofitSingleton.getInstance();
         ms.setRetrofit("http://api.worldbank.org/");
         CountriesAPIService service = ms.getRetrofit().create(CountriesAPIService.class);
 
