@@ -24,6 +24,7 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import java.util.List;
 import java.util.Observer;
 
 public class MainActivity extends AppCompatActivity implements CountryFragment.OnListFragmentInteractionListener {
@@ -34,6 +35,11 @@ public class MainActivity extends AppCompatActivity implements CountryFragment.O
     private GoogleApiClient client;
     private FragmentManager manager;
     private InternetConnectionReceiver receiver;
+
+    enum FragmentType {
+        COUNTRY_LIST,
+        MAP
+    }
 
     /**
      * The {@link PagerAdapter} that will provide
@@ -86,6 +92,14 @@ public class MainActivity extends AppCompatActivity implements CountryFragment.O
         super.onResume();
         receiver = new InternetConnectionReceiver();
         registerReceiver(receiver, new IntentFilter(Context.CONNECTIVITY_SERVICE));
+
+        Fragment fragment;
+        manager = getSupportFragmentManager();
+        fragment = manager.findFragmentByTag(FragmentType.COUNTRY_LIST.name());
+        CountryFragment countryFragment = (CountryFragment) fragment;
+        if (receiver != null && receiver.getObserver() != null) {
+            receiver.getObserver().addObserver((Observer) countryFragment.getPresenter());
+        }
     }
 
     @Override
@@ -114,11 +128,6 @@ public class MainActivity extends AppCompatActivity implements CountryFragment.O
         client.disconnect();
     }
 
-    enum FragmentType {
-        COUNTRY_LIST,
-        MAP
-    }
-
     void replaceFragment(FragmentType type) {
         Fragment fragment;
         manager = getSupportFragmentManager();
@@ -131,8 +140,6 @@ public class MainActivity extends AppCompatActivity implements CountryFragment.O
         FragmentTransaction transaction = manager.beginTransaction();
         if (type.equals(FragmentType.COUNTRY_LIST)) {
             transaction.replace(R.id.container, fragment, type.name()).commit();
-            CountryFragment countryFragment = (CountryFragment) fragment;
-            receiver.getObserver().addObserver((Observer) countryFragment.getPresenter());
         }
     }
 

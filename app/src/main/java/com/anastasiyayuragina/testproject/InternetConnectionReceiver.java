@@ -14,11 +14,6 @@ import android.widget.Toast;
  */
 public class InternetConnectionReceiver extends BroadcastReceiver {
     private String TAG = "MyLogs";
-
-    public InternetConnectionObserver getObserver() {
-        return observer;
-    }
-
     private InternetConnectionObserver observer = new InternetConnectionObserver();
 
     @Override
@@ -38,6 +33,10 @@ public class InternetConnectionReceiver extends BroadcastReceiver {
         } else {
             Toast.makeText(context, "no internet", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public InternetConnectionObserver getObserver() {
+        return observer;
     }
 
 }
