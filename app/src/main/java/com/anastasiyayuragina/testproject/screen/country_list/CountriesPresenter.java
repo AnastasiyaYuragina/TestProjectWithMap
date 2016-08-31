@@ -1,7 +1,6 @@
 package com.anastasiyayuragina.testproject.screen.country_list;
 
 import android.support.v4.util.ArrayMap;
-
 import com.anastasiyayuragina.testproject.ourDataBase.ItemCountry;
 import com.anastasiyayuragina.testproject.jsonCountriesClasses.Country;
 import com.anastasiyayuragina.testproject.ourDataBase.CountryComment;
@@ -23,8 +22,6 @@ public class CountriesPresenter implements CountriesMvp.Presenter, CountriesMvp.
     private ItemCountry itemCountry = null;
     private boolean dataLoaded = false;
     private Map<String, String> com = new ArrayMap<>();
-    private String TAG = "MyLogs";
-
 
     public CountriesPresenter(CountriesMvp.Model model, CountriesMvp.View view) {
         this.model = model;
@@ -45,10 +42,10 @@ public class CountriesPresenter implements CountriesMvp.Presenter, CountriesMvp.
         }
     }
 
-//    @Override
-//    public void onDestroy() {
-//        view = null;
-//    }
+    @Override
+    public void onDestroy() {
+        view = null;
+    }
 
     @Override
     public void onDataLoaded(ItemCountry itemCountry) {

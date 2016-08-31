@@ -14,10 +14,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 import com.anastasiyayuragina.testproject.EndlessRecyclerOnScrollListener;
+import com.anastasiyayuragina.testproject.InternetConnectionObserver;
 import com.anastasiyayuragina.testproject.jsonCountriesClasses.Country;
 import com.anastasiyayuragina.testproject.MyCountryRecyclerViewAdapter;
 import com.anastasiyayuragina.testproject.R;
 import java.util.List;
+import java.util.Observer;
 
 /**
  * A fragment representing a list of Items.
@@ -34,11 +36,7 @@ public class CountryFragment extends Fragment implements CountriesMvp.View {
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
     private MyCountryRecyclerViewAdapter adapter;
-
-    public CountriesMvp.Presenter getPresenter() {
-        return presenter;
-    }
-
+    private static InternetConnectionObserver observer = new InternetConnectionObserver();
     private CountriesMvp.Presenter presenter;
     private ProgressDialog progressDialog;
 
@@ -89,10 +87,11 @@ public class CountryFragment extends Fragment implements CountriesMvp.View {
             progressDialog = new ProgressDialog(context);
             if (!presenter.isDataLoaded()) {
                 if (!isInternetConnection(context)) {
+                    progressDialog.setProgressStyle(R.layout.progress_bar_item);
+                    progressDialog.show();
                     Toast.makeText(context, "no internet", Toast.LENGTH_SHORT).show();
                 } else {
                     progressDialog.setProgressStyle(R.layout.progress_bar_item);
-                    progressDialog.setMessage("");
                     progressDialog.show();
                     presenter.loadData();
                 }
@@ -122,6 +121,22 @@ public class CountryFragment extends Fragment implements CountriesMvp.View {
         }
 
         return isConnected;
+    }
+
+    public InternetConnectionObserver getObserver() {
+        return observer;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        observer.addObserver((Observer) presenter);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        observer.deleteObservers();
     }
 
     @Override

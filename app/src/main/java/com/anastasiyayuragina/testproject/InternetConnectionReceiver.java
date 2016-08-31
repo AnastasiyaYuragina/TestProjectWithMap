@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.util.Log;
 import android.widget.Toast;
 
 /**
@@ -13,12 +12,10 @@ import android.widget.Toast;
  *
  */
 public class InternetConnectionReceiver extends BroadcastReceiver {
-    private String TAG = "MyLogs";
-    private InternetConnectionObserver observer = new InternetConnectionObserver();
+    private static InternetConnectionObserver observer;
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d(TAG, "onReceive: enter");
 
         boolean isConnected = false;
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -35,8 +32,8 @@ public class InternetConnectionReceiver extends BroadcastReceiver {
         }
     }
 
-    public InternetConnectionObserver getObserver() {
-        return observer;
+    public void setObserver(InternetConnectionObserver observer) {
+        InternetConnectionReceiver.observer = observer;
     }
 
 }

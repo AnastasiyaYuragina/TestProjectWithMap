@@ -3,7 +3,6 @@ package com.anastasiyayuragina.testproject;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.net.Uri;
-import android.net.wifi.WifiManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.PagerAdapter;
@@ -23,9 +22,6 @@ import com.anastasiyayuragina.testproject.screen.map.MapFragment;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
-
-import java.util.List;
-import java.util.Observer;
 
 public class MainActivity extends AppCompatActivity implements CountryFragment.OnListFragmentInteractionListener {
     /**
@@ -97,8 +93,9 @@ public class MainActivity extends AppCompatActivity implements CountryFragment.O
         manager = getSupportFragmentManager();
         fragment = manager.findFragmentByTag(FragmentType.COUNTRY_LIST.name());
         CountryFragment countryFragment = (CountryFragment) fragment;
-        if (receiver != null && receiver.getObserver() != null) {
-            receiver.getObserver().addObserver((Observer) countryFragment.getPresenter());
+
+        if (receiver != null && countryFragment.getObserver() != null) {
+            receiver.setObserver(countryFragment.getObserver());
         }
     }
 
