@@ -33,11 +33,13 @@ public class CountriesPresenter implements CountriesMvp.Presenter, CountriesMvp.
         if (itemCountry == null) {
             model.loadData(1, this);
         } else {
-            view.showLoadMore();
             int page = itemCountry.getPageInfo().getPage() + 1;
             if (page <= itemCountry.getPageInfo().getPages()){
+                view.showLoadMore();
                 dataLoaded = false;
                 model.loadData(page, this);
+            } else if (page > itemCountry.getPageInfo().getPages()) {
+                dataLoaded = true;
             }
         }
     }

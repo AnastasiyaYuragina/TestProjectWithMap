@@ -165,11 +165,12 @@ public class CountryFragment extends Fragment implements CountriesMvp.View {
         adapter.setLoading(true);
     }
 
-//    @Override
-//    public void onDestroy() {
-//        super.onDestroy();
-//        presenter.onDestroy();
-//    }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        progressDialog.dismiss();
+        presenter.onDestroy();
+    }
 
     /**
      * This interface must be implemented by activities that contain this
