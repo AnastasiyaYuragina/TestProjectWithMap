@@ -37,8 +37,6 @@ public class MapFragment extends Fragment implements MapMvp.ViewMap{
     private TextView infoAboutCountry;
     private EditText comment;
 
-
-
     public static MapFragment newInstance(String countryName, String latitude, String longitude, String id) {
 
         Bundle args = new Bundle();
@@ -68,10 +66,8 @@ public class MapFragment extends Fragment implements MapMvp.ViewMap{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.map_fragment, container, false);
-        MapMvp.ModelMap modelMap = new MapModel();
-        MapMvp.PresenterMap presenterMap;
         mapView = (MapView) view.findViewById(R.id.map);
-        presenterMap = new MapPresenter(modelMap, this);
+        MapMvp.PresenterMap presenterMap = new MapPresenter(this);
         infoAboutCountry = (TextView) view.findViewById(R.id.about_country);
         comment = (EditText) view.findViewById(R.id.editComment);
 

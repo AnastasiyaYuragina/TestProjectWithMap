@@ -3,11 +3,13 @@ package com.anastasiyayuragina.testproject.screen.country_list;
 import android.support.v4.util.ArrayMap;
 import com.anastasiyayuragina.testproject.CountriesAPIService;
 import com.anastasiyayuragina.testproject.ourDataBase.ItemCountry;
-import com.anastasiyayuragina.testproject.MyRetrofitSingleton;
+
 import java.util.Map;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.jackson.JacksonConverterFactory;
 
 /**
  * Created by anastasiya yuragina on 8/2/16.
@@ -17,10 +19,11 @@ public class CountriesModel implements CountriesMvp.Model {
 
     @Override
     public void loadData(int page, final OnDataLoaded listener) {
-        MyRetrofitSingleton ms = MyRetrofitSingleton.getInstance();
-        ms.setRetrofit("http://api.worldbank.org/");
-        CountriesAPIService service = ms.getRetrofit().create(CountriesAPIService.class);
-
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://api.worldbank.org/")
+                .addConverterFactory(JacksonConverterFactory.create())
+                .build();
+        CountriesAPIService service = retrofit.create(CountriesAPIService.class);
         Call<ItemCountry> itemCall = service.loadItem(pageParam(String.valueOf(page)));
         itemCall.enqueue(new Callback<ItemCountry>() {
             @Override

@@ -58,7 +58,7 @@ public class MyCountryRecyclerViewAdapter extends RecyclerView.Adapter<MyCountry
         Country viewModel = mValues.get(position);
 
         if (viewModel.getComment() != null && !viewModel.getComment().isEmpty()) {
-            holder.mComment.setText("Comment: " + viewModel.getComment().toString());
+            holder.mComment.setText("Comment: " + viewModel.getComment());
         } else {
             holder.mComment.setText("");
         }

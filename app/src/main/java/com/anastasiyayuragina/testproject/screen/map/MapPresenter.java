@@ -11,9 +11,9 @@ public class MapPresenter implements MapMvp.PresenterMap, MapMvp.ModelMap.OnData
     private MapMvp.ViewMap viewMap;
     private String countryName;
 
-    public MapPresenter(MapMvp.ModelMap modelMap, MapMvp.ViewMap viewMap) {
-        this.modelMap = modelMap;
+    public MapPresenter(MapMvp.ViewMap viewMap) {
         this.viewMap = viewMap;
+        this.modelMap = new MapModel();
     }
 
     @Override

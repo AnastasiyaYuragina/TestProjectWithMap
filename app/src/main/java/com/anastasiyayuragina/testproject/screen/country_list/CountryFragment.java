@@ -68,8 +68,7 @@ public class CountryFragment extends Fragment implements CountriesMvp.View {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_country_list, container, false);
-        final CountriesMvp.Model model = new CountriesModel();
-        presenter = new CountriesPresenter(model, this);
+        presenter = new CountriesPresenter(this);
 
         // Set the adapter
         if (view instanceof RecyclerView) {
@@ -86,13 +85,11 @@ public class CountryFragment extends Fragment implements CountriesMvp.View {
 
             progressDialog = new ProgressDialog(context);
             if (!presenter.isDataLoaded()) {
+                progressDialog.setProgressStyle(R.layout.progress_bar_item);
+                progressDialog.show();
                 if (!isInternetConnection(context)) {
-                    progressDialog.setProgressStyle(R.layout.progress_bar_item);
-                    progressDialog.show();
                     Toast.makeText(context, "no internet", Toast.LENGTH_SHORT).show();
                 } else {
-                    progressDialog.setProgressStyle(R.layout.progress_bar_item);
-                    progressDialog.show();
                     presenter.loadData();
                 }
             }
@@ -136,6 +133,7 @@ public class CountryFragment extends Fragment implements CountriesMvp.View {
     @Override
     public void onStop() {
         super.onStop();
+        progressDialog.dismiss();
         observer.deleteObservers();
     }
 
@@ -158,6 +156,7 @@ public class CountryFragment extends Fragment implements CountriesMvp.View {
     @Override
     public void setData(List<Country> countryList) {
         adapter.addItems(countryList);
+        progressDialog.dismiss();
     }
 
     @Override
@@ -168,7 +167,6 @@ public class CountryFragment extends Fragment implements CountriesMvp.View {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        progressDialog.dismiss();
         presenter.onDestroy();
     }
 

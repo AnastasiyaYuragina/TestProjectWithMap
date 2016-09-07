@@ -31,9 +31,4 @@ public class CountryComment extends BaseModel {
     public String getComment() {
         return comment;
     }
-
-    public String getId_country() {
-        return id_country;
-    }
-
 }

@@ -23,9 +23,9 @@ public class CountriesPresenter implements CountriesMvp.Presenter, CountriesMvp.
     private boolean dataLoaded = false;
     private Map<String, String> com = new ArrayMap<>();
 
-    public CountriesPresenter(CountriesMvp.Model model, CountriesMvp.View view) {
-        this.model = model;
+    public CountriesPresenter(CountriesMvp.View view) {
         this.view = view;
+        this.model = new CountriesModel();
     }
 
     @Override
