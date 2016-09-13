@@ -1,10 +1,9 @@
 package com.anastasiyayuragina.testproject.screen.country_list;
 
 import android.support.v4.util.ArrayMap;
-import com.anastasiyayuragina.testproject.ourDataBase.ItemCountry;
+import com.anastasiyayuragina.testproject.jsonCountriesClasses.PageInfo;
 import com.anastasiyayuragina.testproject.jsonCountriesClasses.Country;
 import com.anastasiyayuragina.testproject.ourDataBase.CountryComment;
-import com.anastasiyayuragina.testproject.ourDataBase.CountryComment_Table;
 import com.raizlabs.android.dbflow.sql.language.Select;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +18,7 @@ public class CountriesPresenter implements CountriesMvp.Presenter, CountriesMvp.
 
     private CountriesMvp.Model model;
     private CountriesMvp.View view;
-    private ItemCountry itemCountry = null;
+    private PageInfo pageInfo = null;
     private boolean dataLoaded = false;
     private Map<String, String> com = new ArrayMap<>();
 
@@ -30,15 +29,15 @@ public class CountriesPresenter implements CountriesMvp.Presenter, CountriesMvp.
 
     @Override
     public void loadData() {
-        if (itemCountry == null) {
+        if (pageInfo == null) {
             model.loadData(1, this);
         } else {
-            int page = itemCountry.getPageInfo().getPage() + 1;
-            if (page <= itemCountry.getPageInfo().getPages()){
+            int page = pageInfo.getPage() + 1;
+            if (page <= pageInfo.getPages()){
                 view.showLoadMore();
                 dataLoaded = false;
                 model.loadData(page, this);
-            } else if (page > itemCountry.getPageInfo().getPages()) {
+            } else if (page > pageInfo.getPages()) {
                 dataLoaded = true;
             }
         }
@@ -50,23 +49,25 @@ public class CountriesPresenter implements CountriesMvp.Presenter, CountriesMvp.
     }
 
     @Override
-    public void onDataLoaded(ItemCountry itemCountry) {
-        this.itemCountry = itemCountry;
+    public void onDataLoadedList(List<Country> itemCountry) {
 
-        List<Country> country = itemCountry.getCountryList();
-
-        for (int i = 0; i < country.size(); i++) {
-            CountryComment comment = new Select(CountryComment_Table.comment).from(CountryComment.class).where(CountryComment_Table.id_country.is(country.get(i).getId())).querySingle();
+        for (int i = 0; i < itemCountry.size(); i++) {
+            CountryComment comment = new Select(CountryComment_Table.comment).from(CountryComment.class).where(CountryComment_Table.id_country.is(itemCountry.get(i).getId())).querySingle();
             if (comment != null) {
-                com.put(country.get(i).getId(), comment.getComment());
-                country.get(i).setComment(com.get(country.get(i).getId()));
+                com.put(itemCountry.get(i).getId(), comment.getComment());
+                itemCountry.get(i).setComment(com.get(itemCountry.get(i).getId()));
             }
         }
 
         if(view != null){
-            view.setData(country);
+            view.setData(itemCountry);
             dataLoaded = true;
         }
+    }
+
+    @Override
+    public void onDataLoadedPage(PageInfo pageInfo) {
+        this.pageInfo = pageInfo;
     }
 
     public boolean isDataLoaded() {
