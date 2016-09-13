@@ -2,10 +2,8 @@ package com.anastasiyayuragina.testproject.screen.country_list;
 
 import android.support.v4.util.ArrayMap;
 import com.anastasiyayuragina.testproject.CountriesAPIService;
-import com.anastasiyayuragina.testproject.ourDataBase.CountryTable;
 import com.anastasiyayuragina.testproject.ourDataBase.ItemCountry;
-import com.raizlabs.android.dbflow.sql.language.Select;
-import java.util.List;
+
 import java.util.Map;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -18,13 +16,9 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
  *
  */
 public class CountriesModel implements CountriesMvp.Model {
-    private CountryTable countryTable = new CountryTable();
 
     @Override
     public void loadData(int page, final OnDataLoaded listener) {
-
-        List<CountryTable> countryTables = new Select(CountryTable_Table.country).from(CountryTable.class).where(CountryTable_Table.countryPage.is(page)).queryList();
-
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://api.worldbank.org/")
                 .addConverterFactory(JacksonConverterFactory.create())
@@ -35,15 +29,7 @@ public class CountriesModel implements CountriesMvp.Model {
             @Override
             public void onResponse(Call<ItemCountry> call, Response<ItemCountry> response) {
                 ItemCountry itemCountry = response.body();
-                listener.onDataLoadedList(itemCountry.getCountryList());
-                listener.onDataLoadedPage(itemCountry.getPageInfo());
-
-                for (int i = 0; i < itemCountry.getCountryList().size(); i++) {
-                    countryTable.setCountry(itemCountry.getCountryList().get(i));
-                    countryTable.setCountryPage(itemCountry.getPageInfo().getPage());
-                    countryTable.save();
-                }
-
+                listener.onDataLoaded(itemCountry);
             }
 
             @Override

@@ -1,6 +1,5 @@
 package com.anastasiyayuragina.testproject.screen.country_list;
 
-import com.anastasiyayuragina.testproject.jsonCountriesClasses.PageInfo;
 import com.anastasiyayuragina.testproject.ourDataBase.ItemCountry;
 import com.anastasiyayuragina.testproject.jsonCountriesClasses.Country;
 import java.util.List;
@@ -21,8 +20,7 @@ public interface CountriesMvp {
     }
     interface Model{
         interface OnDataLoaded{
-            void onDataLoadedList(List<Country> itemCountry);
-            void onDataLoadedPage(PageInfo pageInfo);
+            void onDataLoaded(ItemCountry itemCountry);
         }
         void loadData(int page, OnDataLoaded listener);
     }
