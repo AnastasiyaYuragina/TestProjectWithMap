@@ -1,9 +1,15 @@
 package com.anastasiyayuragina.testproject.screen.country_list;
 
 import android.support.v4.util.ArrayMap;
-import com.anastasiyayuragina.testproject.CountriesAPIService;
-import com.anastasiyayuragina.testproject.ourDataBase.ItemCountry;
+import android.util.Log;
 
+import com.anastasiyayuragina.testproject.CountriesAPIService;
+import com.anastasiyayuragina.testproject.jsonCountriesClasses.Country;
+import com.anastasiyayuragina.testproject.jsonCountriesClasses.Region;
+import com.anastasiyayuragina.testproject.ourDataBase.ItemCountry;
+import com.raizlabs.android.dbflow.sql.language.Select;
+
+import java.util.List;
 import java.util.Map;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -16,6 +22,9 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
  *
  */
 public class CountriesModel implements CountriesMvp.Model {
+
+    List<Country> countryTable = new Select().from(Country.class).queryList();
+    private String TAG = "MyLog";
 
     @Override
     public void loadData(int page, final OnDataLoaded listener) {
@@ -30,6 +39,12 @@ public class CountriesModel implements CountriesMvp.Model {
             public void onResponse(Call<ItemCountry> call, Response<ItemCountry> response) {
                 ItemCountry itemCountry = response.body();
                 listener.onDataLoaded(itemCountry);
+
+                saveIntoDB(itemCountry);
+
+                for (int i = 0; i < countryTable.size(); i++) {
+                    Log.d(TAG, countryTable.get(i).toString());
+                }
             }
 
             @Override
@@ -45,5 +60,23 @@ public class CountriesModel implements CountriesMvp.Model {
         urlParams.put("page", page);
 
         return urlParams;
+    }
+
+    private void saveIntoDB (ItemCountry itemCountry) {
+        Country country = new Country();
+//        Region region = new Region();
+
+        for (int i = 0; i < itemCountry.getCountryList().size(); i++) {
+//            region.setId(itemCountry.getCountryList().get(i).getRegion().getId());
+//            region.setValue(itemCountry.getCountryList().get(i).getRegion().getValue());
+//            region.save();
+
+            country.setId(itemCountry.getCountryList().get(i).getId());
+            country.setName(itemCountry.getCountryList().get(i).getName());
+//            country.setRegion(region);
+            country.setLatitude(itemCountry.getCountryList().get(i).getLatitude());
+            country.setLongitude(itemCountry.getCountryList().get(i).getLongitude());
+            country.save();
+        }
     }
 }

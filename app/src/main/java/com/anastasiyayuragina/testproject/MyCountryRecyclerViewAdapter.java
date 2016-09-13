@@ -66,7 +66,7 @@ public class MyCountryRecyclerViewAdapter extends RecyclerView.Adapter<MyCountry
 
         holder.mItem = viewModel;
         holder.mIdView.setText("Country: " + viewModel.getName());
-        holder.mContentView.setText("Region: " + viewModel.getRegion().getValue());
+//        holder.mContentView.setText("Region: " + viewModel.getRegion().getValue());
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
