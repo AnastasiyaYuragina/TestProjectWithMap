@@ -8,6 +8,9 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.anastasiyayuragina.testproject.jsonCountriesClasses.Country;
+import com.anastasiyayuragina.testproject.jsonCountriesClasses.Country_Table;
 import com.anastasiyayuragina.testproject.ourDataBase.ItemForMap;
 import com.anastasiyayuragina.testproject.R;
 import com.anastasiyayuragina.testproject.ourDataBase.CountryComment;
@@ -18,6 +21,9 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.raizlabs.android.dbflow.sql.language.Select;
+
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -89,8 +95,7 @@ public class MapFragment extends Fragment implements MapMvp.ViewMap{
     public void onPause() {
         super.onPause();
         if (!comment.getText().toString().isEmpty()) {
-            CountryComment countryComment = new CountryComment();
-            countryComment.setId_country(idCountry);
+            Country countryComment = new Select().from(Country.class).where(Country_Table.id.is(idCountry)).querySingle();
             countryComment.setComment(comment.getText().toString());
             countryComment.save();
         }

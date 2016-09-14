@@ -3,12 +3,17 @@ package com.anastasiyayuragina.testproject.jsonCountriesClasses;
 
 import java.util.HashMap;
 import java.util.Map;
+import com.anastasiyayuragina.testproject.ourDataBase.MyDatabase;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.raizlabs.android.dbflow.annotation.Column;
+import com.raizlabs.android.dbflow.annotation.PrimaryKey;
+import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.structure.BaseModel;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 //@Generated("org.jsonschema2pojo")
@@ -16,12 +21,18 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "id",
     "value"
 })
-public class Region {
 
+@Table(database = MyDatabase.class)
+public class Region extends BaseModel {
+
+    @PrimaryKey
     @JsonProperty("id")
     private String id;
+
+    @Column
     @JsonProperty("value")
     private String value;
+
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<>();
 
