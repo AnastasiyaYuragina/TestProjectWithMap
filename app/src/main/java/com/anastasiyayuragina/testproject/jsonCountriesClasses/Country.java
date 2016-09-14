@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.raizlabs.android.dbflow.annotation.Column;
+import com.raizlabs.android.dbflow.annotation.ForeignKey;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
@@ -21,6 +22,7 @@ import com.raizlabs.android.dbflow.structure.BaseModel;
 @JsonPropertyOrder({
     "id",
     "name",
+    "region",
     "longitude",
     "latitude"
 })
@@ -36,9 +38,10 @@ public class Country extends BaseModel {
     @JsonProperty("name")
     private String name;
 
-//    @Column
-//    @JsonProperty("region")
-//    private Region region;
+    @Column
+    @ForeignKey
+    @JsonProperty("region")
+    private Region region;
 
     @Column
     @JsonProperty("longitude")
@@ -51,7 +54,11 @@ public class Country extends BaseModel {
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<>();
 
+    @Column
     private String comment;
+
+    @Column
+    private int page;
 
     /**
      * 
@@ -93,25 +100,25 @@ public class Country extends BaseModel {
         this.name = name;
     }
 
-//    /**
-//     *
-//     * @return
-//     *     The region
-//     */
-//    @JsonProperty("region")
-//    public Region getRegion() {
-//        return region;
-//    }
-//
-//    /**
-//     *
-//     * @param region
-//     *     The region
-//     */
-//    @JsonProperty("region")
-//    public void setRegion(Region region) {
-//        this.region = region;
-//    }
+    /**
+     *
+     * @return
+     *     The region
+     */
+    @JsonProperty("region")
+    public Region getRegion() {
+        return region;
+    }
+
+    /**
+     *
+     * @param region
+     *     The region
+     */
+    @JsonProperty("region")
+    public void setRegion(Region region) {
+        this.region = region;
+    }
 
     /**
      * 
@@ -171,7 +178,11 @@ public class Country extends BaseModel {
         this.comment = comment;
     }
 
+    public int getPage() {
+        return page;
+    }
 
-
-
+    public void setPage(int page) {
+        this.page = page;
+    }
 }

@@ -3,7 +3,6 @@ package com.anastasiyayuragina.testproject.jsonCountriesClasses;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import com.anastasiyayuragina.testproject.ourDataBase.MyDatabase;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;

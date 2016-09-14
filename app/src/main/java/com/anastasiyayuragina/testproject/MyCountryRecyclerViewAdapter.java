@@ -66,7 +66,7 @@ public class MyCountryRecyclerViewAdapter extends RecyclerView.Adapter<MyCountry
 
         holder.mItem = viewModel;
         holder.mIdView.setText("Country: " + viewModel.getName());
-//        holder.mContentView.setText("Region: " + viewModel.getRegion().getValue());
+        holder.mContentView.setText("Region: " + viewModel.getRegion().getValue());
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -99,14 +99,14 @@ public class MyCountryRecyclerViewAdapter extends RecyclerView.Adapter<MyCountry
         });
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
-        public Country mItem;
-        public final TextView mComment;
+    class ViewHolder extends RecyclerView.ViewHolder {
+        final View mView;
+        final TextView mIdView;
+        final TextView mContentView;
+        Country mItem;
+        final TextView mComment;
 
-        public ViewHolder(View view) {
+        ViewHolder(View view) {
             super(view);
             mView = view;
             mIdView = (TextView) view.findViewById(R.id.county_name);
