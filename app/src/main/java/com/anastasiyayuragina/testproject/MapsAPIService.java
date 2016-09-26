@@ -1,7 +1,6 @@
 package com.anastasiyayuragina.testproject;
 
-import com.anastasiyayuragina.testproject.ourDataBase.ItemForMap;
-
+import com.anastasiyayuragina.testproject.ourDataBase.MapItem;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
@@ -12,5 +11,5 @@ import retrofit2.http.Path;
  */
 public interface MapsAPIService {
     @GET("rest/v1/name/{country}")
-    Call<ItemForMap> loadItem(@Path("country") String country);
+    Call<MapItem> loadItem(@Path("country") String country);
 }

@@ -6,7 +6,7 @@ import com.anastasiyayuragina.testproject.jsonCountriesClasses.Country;
 import com.anastasiyayuragina.testproject.jsonCountriesClasses.Country_Table;
 import com.anastasiyayuragina.testproject.jsonCountriesClasses.PageInfo;
 import com.anastasiyayuragina.testproject.jsonCountriesClasses.Region;
-import com.anastasiyayuragina.testproject.ourDataBase.ItemCountry;
+import com.anastasiyayuragina.testproject.ourDataBase.CountryItem;
 import com.raizlabs.android.dbflow.sql.language.Select;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +21,7 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
  *
  */
 class CountriesModel implements CountriesMvp.Model {
-    private ItemCountry itemCountry;
+    private CountryItem CountryItem;
 
     @Override
     public void loadData(final int page, final OnDataLoaded listener) {
@@ -33,28 +33,27 @@ class CountriesModel implements CountriesMvp.Model {
                     .addConverterFactory(JacksonConverterFactory.create())
                     .build();
             CountriesAPIService service = retrofit.create(CountriesAPIService.class);
-            Call<ItemCountry> itemCall = service.loadItem(pageParam(String.valueOf(page)));
-            itemCall.enqueue(new Callback<ItemCountry>() {
+            Call<CountryItem> itemCall = service.loadItem(pageParam(String.valueOf(page)));
+            itemCall.enqueue(new Callback<CountryItem>() {
                 @Override
-                public void onResponse(Call<ItemCountry> call, Response<ItemCountry> response) {
-                    itemCountry = response.body();
+                public void onResponse(Call<CountryItem> call, Response<CountryItem> response) {
+                    CountryItem = response.body();
 
-                    listener.onDataLoadedList(itemCountry.getCountryList());
-                    listener.onDataLoadedPage(itemCountry.getPageInfo());
+                    listener.onDataLoaded(CountryItem.getCountryList(), CountryItem.getPageInfo());
 
-                    saveIntoDB(itemCountry.getCountryList(), page);
+                    saveIntoDB(CountryItem.getCountryList(), page);
                 }
 
                 @Override
-                public void onFailure(Call<ItemCountry> call, Throwable t) {
+                public void onFailure(Call<CountryItem> call, Throwable t) {
                 }
             });
         } else {
-            listener.onDataLoadedList(countryTable);
             PageInfo pageInfo = new PageInfo();
             pageInfo.setPage(page);
             pageInfo.setPages(page + 1);
-            listener.onDataLoadedPage(pageInfo);
+
+            listener.onDataLoaded(countryTable, pageInfo);
         }
     }
 
@@ -69,18 +68,19 @@ class CountriesModel implements CountriesMvp.Model {
 
     private void saveIntoDB (List<Country> itemCountry, int page) {
         for (int i = 0; i < itemCountry.size(); i++) {
+            Country countryListItem = itemCountry.get(i);
             Country country = new Country();
             Region region = new Region();
 
-            region.setId(itemCountry.get(i).getRegion().getId());
-            region.setValue(itemCountry.get(i).getRegion().getValue());
+            region.setId(countryListItem.getRegion().getId());
+            region.setValue(countryListItem.getRegion().getValue());
             region.save();
 
-            country.setId(itemCountry.get(i).getId());
-            country.setName(itemCountry.get(i).getName());
+            country.setId(countryListItem.getId());
+            country.setName(countryListItem.getName());
             country.setRegion(region);
-            country.setLatitude(itemCountry.get(i).getLatitude());
-            country.setLongitude(itemCountry.get(i).getLongitude());
+            country.setLatitude(countryListItem.getLatitude());
+            country.setLongitude(countryListItem.getLongitude());
             country.setPage(page);
             country.save();
         }

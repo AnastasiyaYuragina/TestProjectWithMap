@@ -44,15 +44,12 @@ class CountriesPresenter implements CountriesMvp.Presenter, CountriesMvp.Model.O
     }
 
     @Override
-    public void onDataLoadedList(List<Country> countryList) {
+    public void onDataLoaded(List<Country> countryList, PageInfo pageInfo) {
         if(view != null){
             view.setData(countryList);
             dataLoaded = true;
         }
-    }
 
-    @Override
-    public void onDataLoadedPage(PageInfo pageInfo) {
         this.pageInfo = pageInfo;
     }
 

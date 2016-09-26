@@ -12,22 +12,23 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.List;
 
-public class ItemCountryDeserializer extends JsonDeserializer<ItemCountry> {
+class CountryDeserializer extends JsonDeserializer<CountryItem> {
 
     private static final int PAGE_INFO = 0;
     private static final int COUNTRIES_ARRAY = 1;
 
     @Override
-    public ItemCountry deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+    public CountryItem deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
 
-        ItemCountry itemCountry = new ItemCountry();
+        CountryItem CountryItem = new CountryItem();
         ObjectMapper mapper = new ObjectMapper();
         TreeNode treeNode = p.readValueAsTree();
 
-        itemCountry.setPageInfo((PageInfo) mapper.readerFor(new TypeReference<PageInfo>() {}).readValue((JsonNode) treeNode.get(PAGE_INFO)));
-        itemCountry.setCountryList((List<Country>) mapper.readerFor(new TypeReference<List<Country>>(){}).readValue((JsonNode) treeNode.get(COUNTRIES_ARRAY)));
+        CountryItem.setPageInfo((PageInfo) mapper.readerFor(new TypeReference<PageInfo>() {})
+                .readValue((JsonNode) treeNode.get(PAGE_INFO)));
+        CountryItem.setCountryList((List<Country>) mapper.readerFor(new TypeReference<List<Country>>(){})
+                .readValue((JsonNode) treeNode.get(COUNTRIES_ARRAY)));
 
-        return itemCountry;
-
+        return CountryItem;
     }
 }

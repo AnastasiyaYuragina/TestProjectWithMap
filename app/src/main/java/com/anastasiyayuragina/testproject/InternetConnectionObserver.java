@@ -8,7 +8,7 @@ import java.util.Observable;
  */
 public class InternetConnectionObserver extends Observable {
 
-    public void dataChanged() {
+    void dataChanged() {
         setChanged();
         notifyObservers();
     }

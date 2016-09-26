@@ -1,4 +1,3 @@
-
 package com.anastasiyayuragina.testproject.jsonInfoForMapClasses;
 
 import java.util.ArrayList;
@@ -37,7 +36,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "currencies",
     "languages"
 })
-public class InfoForMap {
+
+public class MapInfo {
 
     @JsonProperty("name")
     private String name;

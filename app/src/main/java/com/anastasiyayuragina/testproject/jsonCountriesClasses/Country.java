@@ -4,7 +4,7 @@ package com.anastasiyayuragina.testproject.jsonCountriesClasses;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.anastasiyayuragina.testproject.ourDataBase.MyDatabase;
+import com.anastasiyayuragina.testproject.ourDataBase.CountriesDatabase;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -27,7 +27,7 @@ import com.raizlabs.android.dbflow.structure.BaseModel;
     "latitude"
 })
 
-@Table(database = MyDatabase.class)
+@Table(database = CountriesDatabase.class)
 public class Country extends BaseModel {
 
     @PrimaryKey

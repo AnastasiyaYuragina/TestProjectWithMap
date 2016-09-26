@@ -1,6 +1,6 @@
 package com.anastasiyayuragina.testproject.screen.map;
 
-import com.anastasiyayuragina.testproject.ourDataBase.ItemForMap;
+import com.anastasiyayuragina.testproject.ourDataBase.MapItem;
 
 /**
  * Created by anastasiyayuragina on 8/10/16.
@@ -13,12 +13,12 @@ public interface MapMvp {
     }
 
     interface ViewMap {
-        void setMapMarker(ItemForMap itemForMap);
+        void setMapMarker(MapItem mapItem);
     }
 
     interface ModelMap {
         interface OnDataLoadedMap {
-            void onDataLoadedMap(ItemForMap itemForMap);
+            void onDataLoadedMap(MapItem mapItem);
         }
         void loadData(String countryName, OnDataLoadedMap listener);
     }

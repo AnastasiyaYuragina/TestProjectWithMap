@@ -3,15 +3,14 @@ package com.anastasiyayuragina.testproject.ourDataBase;
 import com.anastasiyayuragina.testproject.jsonCountriesClasses.Country;
 import com.anastasiyayuragina.testproject.jsonCountriesClasses.PageInfo;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
 import java.util.List;
 
 /**
  * Created by anastasiya yuragina on 7/27/16.
  *
  */
-@JsonDeserialize (using = ItemCountryDeserializer.class)
-public class ItemCountry {
+@JsonDeserialize (using = CountryDeserializer.class)
+public class CountryItem {
     private PageInfo pageInfo;
     private List<Country> countryList;
 
@@ -19,7 +18,7 @@ public class ItemCountry {
         return pageInfo;
     }
 
-    public void setPageInfo(PageInfo pageInfo) {
+    void setPageInfo(PageInfo pageInfo) {
         this.pageInfo = pageInfo;
     }
 
@@ -27,7 +26,7 @@ public class ItemCountry {
         return countryList;
     }
 
-    public void setCountryList(List<Country> countryList) {
+    void setCountryList(List<Country> countryList) {
         this.countryList = countryList;
     }
 }

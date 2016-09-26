@@ -1,6 +1,6 @@
 package com.anastasiyayuragina.testproject.ourDataBase;
 
-import com.anastasiyayuragina.testproject.jsonInfoForMapClasses.InfoForMap;
+import com.anastasiyayuragina.testproject.jsonInfoForMapClasses.MapInfo;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -14,17 +14,18 @@ import java.io.IOException;
  * Created by anastasiyayuragina on 8/11/16.
  *
  */
-public class ItemForMapDeserializer extends JsonDeserializer<ItemForMap> {
+class MapDeserializer extends JsonDeserializer<MapItem> {
 
     @Override
-    public ItemForMap deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+    public MapItem deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
 
-        ItemForMap itemForMap = new ItemForMap();
+        MapItem mapItem = new MapItem();
         ObjectMapper mapper = new ObjectMapper();
         TreeNode treeNode = p.readValueAsTree();
 
-        itemForMap.setInfoForMap((InfoForMap) mapper.readerFor(new TypeReference<InfoForMap>() {}).readValue((JsonNode) treeNode.get(0)));
+        mapItem.setInfoForMap((MapInfo) mapper.readerFor(new TypeReference<MapInfo>() {})
+                .readValue((JsonNode) treeNode.get(0)));
 
-        return itemForMap;
+        return mapItem;
     }
 }

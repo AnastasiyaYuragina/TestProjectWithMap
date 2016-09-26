@@ -12,17 +12,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MyCountryRecyclerViewAdapter extends RecyclerView.Adapter<MyCountryRecyclerViewAdapter.ViewHolder> {
-
-    private final List<Country> mValues = new ArrayList<>();
-    private final CountryFragment.OnListFragmentInteractionListener mListener;
+    private static final int ITEM_TYPE_COUNTRY = 0;
+    private static final int ITEM_TYPE_LOADING = 1;
+    private final List<Country> countryList = new ArrayList<>();
+    private final CountryFragment.OnListFragmentInteractionListener listener;
     private boolean loading;
 
     public MyCountryRecyclerViewAdapter(CountryFragment.OnListFragmentInteractionListener listener) {
-        mListener = listener;
+        this.listener = listener;
     }
 
     public void addItems(List<Country> items) {
-        mValues.addAll(items);
+        countryList.addAll(items);
         loading = false;
         notifyDataSetChanged();
     }
@@ -30,10 +31,12 @@ public class MyCountryRecyclerViewAdapter extends RecyclerView.Adapter<MyCountry
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
-        if(viewType == 0){
-             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_country, parent, false);
-        }else if(viewType == 1){
-            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.progress_bar_item, parent, false);
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+
+        if(viewType == ITEM_TYPE_COUNTRY){
+             view = inflater.inflate(R.layout.fragment_country, parent, false);
+        }else if(viewType == ITEM_TYPE_LOADING){
+            view = inflater.inflate(R.layout.progress_bar_item, parent, false);
         }else {
             throw new IllegalArgumentException("Wrong view type");
         }
@@ -43,37 +46,33 @@ public class MyCountryRecyclerViewAdapter extends RecyclerView.Adapter<MyCountry
 
     @Override
     public int getItemViewType(int position) {
-        if(position == mValues.size()){
-            return 1;
-        }
-        return 0;
+        return countryList.size() == position ? ITEM_TYPE_LOADING : ITEM_TYPE_COUNTRY;
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        if(getItemViewType(position) == 1) {
+        if(getItemViewType(position) == ITEM_TYPE_LOADING) {
             return;
         }
 
-        Country viewModel = mValues.get(position);
+        Country viewModel = countryList.get(position);
 
         if (viewModel.getComment() != null && !viewModel.getComment().isEmpty()) {
-            holder.mComment.setText("Comment: " + viewModel.getComment());
+            holder.comment.setText("Comment: " + viewModel.getComment());
         } else {
-            holder.mComment.setText("");
+            holder.comment.setText("");
         }
 
-
-        holder.mItem = viewModel;
-        holder.mIdView.setText("Country: " + viewModel.getName());
-        holder.mContentView.setText("Region: " + viewModel.getRegion().getValue());
-        holder.mView.setOnClickListener(new View.OnClickListener() {
+        holder.country = viewModel;
+        holder.countryName.setText("Country: " + viewModel.getName());
+        holder.countryRegion.setText("Region: " + viewModel.getRegion().getValue());
+        holder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (null != mListener) {
+                if (null != listener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
+                    listener.onListFragmentInteraction(holder.country);
                 }
             }
         });
@@ -81,11 +80,8 @@ public class MyCountryRecyclerViewAdapter extends RecyclerView.Adapter<MyCountry
 
     @Override
     public int getItemCount() {
-        int size = mValues.size();
-        if(loading){
-            return size + 1;
-        }
-        return size;
+        int size = countryList.size();
+        return loading ? size + 1 : size;
     }
 
     public void setLoading(boolean loading) {
@@ -100,23 +96,23 @@ public class MyCountryRecyclerViewAdapter extends RecyclerView.Adapter<MyCountry
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        final View mView;
-        final TextView mIdView;
-        final TextView mContentView;
-        Country mItem;
-        final TextView mComment;
+        final View view;
+        final TextView countryName;
+        final TextView countryRegion;
+        Country country;
+        final TextView comment;
 
         ViewHolder(View view) {
             super(view);
-            mView = view;
-            mIdView = (TextView) view.findViewById(R.id.county_name);
-            mContentView = (TextView) view.findViewById(R.id.country_region);
-            mComment = (TextView) view.findViewById(R.id.show_comment);
+            this.view = view;
+            countryName = (TextView) view.findViewById(R.id.county_name);
+            countryRegion = (TextView) view.findViewById(R.id.country_region);
+            comment = (TextView) view.findViewById(R.id.show_comment);
         }
 
         @Override
         public java.lang.String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            return super.toString() + " '" + countryRegion.getText() + "'";
         }
     }
 }

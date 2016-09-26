@@ -20,8 +20,7 @@ interface CountriesMvp {
     }
     interface Model{
         interface OnDataLoaded{
-            void onDataLoadedList(List<Country> countryList);
-            void onDataLoadedPage(PageInfo pageInfo);
+            void onDataLoaded(List<Country> countryList, PageInfo pageInfo);
         }
         void loadData(int page, OnDataLoaded listener);
     }

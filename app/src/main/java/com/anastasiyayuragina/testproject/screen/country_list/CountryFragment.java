@@ -28,26 +28,14 @@ import java.util.Observer;
  * interface.
  */
 public class CountryFragment extends Fragment implements CountriesMvp.View {
-
-    // TODO: Customize parameter argument names
     private static final java.lang.String ARG_COLUMN_COUNT = "column-count";
-
-    // TODO: Customize parameters
     private int mColumnCount = 1;
-    private OnListFragmentInteractionListener mListener;
+    private OnListFragmentInteractionListener listener;
     private MyCountryRecyclerViewAdapter adapter;
     private static InternetConnectionObserver observer = new InternetConnectionObserver();
     private CountriesMvp.Presenter presenter;
     private ProgressDialog progressDialog;
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
-    public CountryFragment() {
-    }
-
-    // TODO: Customize parameter initialization
     public static CountryFragment newInstance(int columnCount) {
         CountryFragment fragment = new CountryFragment();
         Bundle args = new Bundle();
@@ -70,31 +58,21 @@ public class CountryFragment extends Fragment implements CountriesMvp.View {
         View view = inflater.inflate(R.layout.fragment_country_list, container, false);
         presenter = new CountriesPresenter(this);
 
-        // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
-
             RecyclerView recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
-            adapter = new MyCountryRecyclerViewAdapter(mListener);
+
+            RecyclerView.LayoutManager layoutManager = mColumnCount <= 1 ? new LinearLayoutManager(context)
+                    : new GridLayoutManager(context, mColumnCount);
+
+            recyclerView.setLayoutManager(layoutManager);
+
+            adapter = new MyCountryRecyclerViewAdapter(listener);
             recyclerView.setAdapter(adapter);
 
-            progressDialog = new ProgressDialog(context);
-            if (!presenter.isDataLoaded()) {
-                progressDialog.setProgressStyle(R.layout.progress_bar_item);
-                progressDialog.show();
-                if (!isInternetConnection(context)) {
-                    Toast.makeText(context, "no internet", Toast.LENGTH_SHORT).show();
-                } else {
-                    presenter.loadData();
-                }
-            }
+            setProgressDialog(context, presenter);
 
-            recyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener((LinearLayoutManager) recyclerView.getLayoutManager()) {
+            recyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener((LinearLayoutManager) layoutManager) {
                 @Override
                 public void onLoadMore() {
                     if (presenter.isDataLoaded()) {
@@ -106,6 +84,20 @@ public class CountryFragment extends Fragment implements CountriesMvp.View {
         }
 
         return view;
+    }
+
+    private void setProgressDialog (Context context, CountriesMvp.Presenter presenter) {
+        progressDialog = new ProgressDialog(context);
+        if (!presenter.isDataLoaded()) {
+            progressDialog.setProgressStyle(R.layout.progress_bar_item);
+            progressDialog.show();
+
+            if (!isInternetConnection(context)) {
+                Toast.makeText(context, "no internet", Toast.LENGTH_SHORT).show();
+            } else {
+                presenter.loadData();
+            }
+        }
     }
 
     private boolean isInternetConnection(Context context) {
@@ -141,7 +133,7 @@ public class CountryFragment extends Fragment implements CountriesMvp.View {
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
+            listener = (OnListFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString() + " must implement OnListFragmentInteractionListener");
         }
@@ -150,7 +142,7 @@ public class CountryFragment extends Fragment implements CountriesMvp.View {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        listener = null;
     }
 
     @Override

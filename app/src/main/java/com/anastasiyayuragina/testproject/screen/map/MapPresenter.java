@@ -1,17 +1,17 @@
 package com.anastasiyayuragina.testproject.screen.map;
 
-import com.anastasiyayuragina.testproject.ourDataBase.ItemForMap;
+import com.anastasiyayuragina.testproject.ourDataBase.MapItem;
 
 /**
  * Created by anastasiyayuragina on 8/10/16.
  *
  */
-public class MapPresenter implements MapMvp.PresenterMap, MapMvp.ModelMap.OnDataLoadedMap {
+class MapPresenter implements MapMvp.PresenterMap, MapMvp.ModelMap.OnDataLoadedMap {
     private MapMvp.ModelMap modelMap;
     private MapMvp.ViewMap viewMap;
     private String countryName;
 
-    public MapPresenter(MapMvp.ViewMap viewMap) {
+    MapPresenter(MapMvp.ViewMap viewMap) {
         this.viewMap = viewMap;
         this.modelMap = new MapModel();
     }
@@ -22,9 +22,8 @@ public class MapPresenter implements MapMvp.PresenterMap, MapMvp.ModelMap.OnData
     }
 
     @Override
-    public void onDataLoadedMap(ItemForMap itemForMap) {
-
-        viewMap.setMapMarker(itemForMap);
+    public void onDataLoadedMap(MapItem mapItem) {
+        viewMap.setMapMarker(mapItem);
     }
 
     public void setCountryName(String countryName) {

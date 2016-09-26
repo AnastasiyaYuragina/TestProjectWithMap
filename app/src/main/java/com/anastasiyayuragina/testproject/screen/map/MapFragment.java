@@ -8,12 +8,11 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.anastasiyayuragina.testproject.jsonCountriesClasses.Country;
 import com.anastasiyayuragina.testproject.jsonCountriesClasses.Country_Table;
-import com.anastasiyayuragina.testproject.ourDataBase.ItemForMap;
+import com.anastasiyayuragina.testproject.jsonInfoForMapClasses.MapInfo;
+import com.anastasiyayuragina.testproject.ourDataBase.MapItem;
 import com.anastasiyayuragina.testproject.R;
-import com.anastasiyayuragina.testproject.ourDataBase.CountryComment;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -22,7 +21,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.raizlabs.android.dbflow.sql.language.Select;
-
 import java.util.List;
 import java.util.Locale;
 
@@ -34,13 +32,13 @@ public class MapFragment extends Fragment implements MapMvp.ViewMap{
     private static final String COUNTRY_NAME = "country_name";
     private static final String LATITUDE = "latitude";
     private static final String LONGITUDE = "longitude";
-    private static final String ID_COUNTRY = "id_country";
+    private static final String COUNTRY_ID = "id_country";
     private  MapView mapView;
     private String countryName;
     private double latitude;
     private double longitude;
-    private String idCountry;
-    private TextView infoAboutCountry;
+    private String countryId;
+    private TextView countryInfo;
     private EditText comment;
 
     public static MapFragment newInstance(String countryName, String latitude, String longitude, String id) {
@@ -50,7 +48,7 @@ public class MapFragment extends Fragment implements MapMvp.ViewMap{
         args.putString(COUNTRY_NAME, countryName);
         args.putString(LATITUDE, latitude);
         args.putString(LONGITUDE, longitude);
-        args.putString(ID_COUNTRY, id);
+        args.putString(COUNTRY_ID, id);
         fragment.setArguments(args);
         return fragment;
     }
@@ -60,12 +58,16 @@ public class MapFragment extends Fragment implements MapMvp.ViewMap{
         super.onCreate(savedInstanceState);
 
         countryName = getArguments().getString(COUNTRY_NAME);
-        idCountry = getArguments().getString(ID_COUNTRY);
+        countryId = getArguments().getString(COUNTRY_ID);
 
-        if (getArguments().getString(LATITUDE) != null && getArguments().getString(LONGITUDE) != null &&
-                !getArguments().getString(LATITUDE).isEmpty() && !getArguments().getString(LONGITUDE).isEmpty()) {
-            latitude = Double.parseDouble(getArguments().getString(LATITUDE));
-            longitude = Double.parseDouble(getArguments().getString(LONGITUDE));
+        String latitudeString = getArguments().getString(LATITUDE);
+        String longitudeString = getArguments().getString(LONGITUDE);
+        Boolean isLatitude = latitudeString != null && !latitudeString.isEmpty();
+        Boolean isLongitude = longitudeString != null && !longitudeString.isEmpty();
+
+        if (isLatitude && isLongitude) {
+            latitude = Double.parseDouble(latitudeString);
+            longitude = Double.parseDouble(longitudeString);
         }
     }
 
@@ -74,7 +76,7 @@ public class MapFragment extends Fragment implements MapMvp.ViewMap{
         View view = inflater.inflate(R.layout.map_fragment, container, false);
         mapView = (MapView) view.findViewById(R.id.map);
         MapMvp.PresenterMap presenterMap = new MapPresenter(this);
-        infoAboutCountry = (TextView) view.findViewById(R.id.about_country);
+        countryInfo = (TextView) view.findViewById(R.id.about_country);
         comment = (EditText) view.findViewById(R.id.editComment);
 
         presenterMap.setCountryName(countryName);
@@ -94,9 +96,14 @@ public class MapFragment extends Fragment implements MapMvp.ViewMap{
     @Override
     public void onPause() {
         super.onPause();
-        if (!comment.getText().toString().isEmpty()) {
-            Country countryComment = new Select().from(Country.class).where(Country_Table.id.is(idCountry)).querySingle();
-            countryComment.setComment(comment.getText().toString());
+        String commentString = comment.getText().toString();
+        if (!commentString.isEmpty()) {
+            Country countryComment = new Select()
+                    .from(Country.class)
+                    .where(Country_Table.id.is(countryId))
+                    .querySingle();
+            assert countryComment != null;
+            countryComment.setComment(commentString);
             countryComment.save();
         }
         mapView.onPause();
@@ -109,63 +116,73 @@ public class MapFragment extends Fragment implements MapMvp.ViewMap{
     }
 
     @Override
-    public void setMapMarker(final ItemForMap itemForMap) {
-        if (itemForMap == null) {
+    public void setMapMarker(final MapItem mapItem) {
+        if (mapItem == null) {
             Toast.makeText(mapView.getContext(), "Unknown coordinates", Toast.LENGTH_SHORT).show();
-
-        } else {
-            if (latitude == 0 || longitude == 0) {
-                latitude = itemForMap.getInfoForMap().getLatlng().get(0);
-                longitude = itemForMap.getInfoForMap().getLatlng().get(1);
-            }
-
-            StringBuilder builderLang = new StringBuilder();
-            Locale locale;
-            for (int i = 0; i < itemForMap.getInfoForMap().getLanguages().size(); i++) {
-
-                if (i == 0) {
-                    locale = new Locale(itemForMap.getInfoForMap().getLanguages().get(i));
-                    builderLang.append(locale.getDisplayLanguage());
-                } else if (i <= itemForMap.getInfoForMap().getLanguages().size()) {
-                    locale = new Locale(itemForMap.getInfoForMap().getLanguages().get(i));
-                    builderLang.append(", ").append(locale.getDisplayLanguage());
-                }
-            }
-
-            final StringBuilder builder = new StringBuilder();
-            builder.append(itemForMap.getInfoForMap().getName()).append(", ")
-                    .append(itemForMap.getInfoForMap().getRegion()).append(", ")
-                    .append(itemForMap.getInfoForMap().getSubregion()).append(", ")
-                    .append("population: ").append(itemForMap.getInfoForMap().getPopulation()).append(", ")
-                    .append("area: ").append(itemForMap.getInfoForMap().getArea()).append(", ")
-                    .append("languages: ").append(builderLang.toString());
-
-            mapView.getMapAsync(new OnMapReadyCallback() {
-                @Override
-                public void onMapReady(final GoogleMap googleMap) {
-                    googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)));
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude)));
-                    googleMap.animateCamera(CameraUpdateFactory.zoomTo(4));
-
-                    googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                        @Override
-                        public boolean onMarkerClick(Marker marker) {
-                            marker.setTitle(itemForMap.getInfoForMap().getCapital());
-
-                            if (infoAboutCountry.getVisibility() == View.INVISIBLE) {
-                                infoAboutCountry.setVisibility(View.VISIBLE);
-                                infoAboutCountry.setText(builder.toString());
-
-                            } else {
-                                infoAboutCountry.setVisibility(View.INVISIBLE);
-                                infoAboutCountry.setText("");
-                            }
-
-                            return false;
-                        }
-                    });
-                }
-            });
+            return;
         }
+
+        final MapInfo mapInfo = mapItem.getInfoForMap();
+
+        if (latitude == 0 || longitude == 0) {
+            final int LATITUDE_INT = 0;
+            final int LONGITUDE_INT = 1;
+            latitude = mapInfo.getLatlng().get(LATITUDE_INT);
+            longitude = mapInfo.getLatlng().get(LONGITUDE_INT);
+        }
+
+        final StringBuilder countryInfoBuilder = countryInfoBuilder(mapInfo);
+
+        mapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(final GoogleMap googleMap) {
+                googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)));
+                googleMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude)));
+                googleMap.animateCamera(CameraUpdateFactory.zoomTo(4));
+
+                googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                    @Override
+                    public boolean onMarkerClick(Marker marker) {
+                        marker.setTitle(mapInfo.getCapital());
+
+                        Boolean isVisibility = countryInfo.getVisibility() == View.INVISIBLE;
+                        countryInfo.setVisibility(isVisibility ? View.VISIBLE : View.INVISIBLE);
+                        countryInfo.setText(isVisibility ? countryInfoBuilder.toString() : " ");
+
+                        return false;
+                    }
+                });
+            }
+        });
+    }
+
+    private StringBuilder countryInfoBuilder (MapInfo mapInfo) {
+        StringBuilder builder = new StringBuilder();
+        StringBuilder languageBuilder = languageBuilder(mapInfo);
+
+        builder.append(mapInfo.getName()).append(", ")
+                .append(mapInfo.getRegion()).append(", ")
+                .append(mapInfo.getSubregion()).append(", ")
+                .append("population: ").append(mapInfo.getPopulation()).append(", ")
+                .append("area: ").append(mapInfo.getArea()).append(", ")
+                .append("languages: ").append(languageBuilder.toString());
+
+        return builder;
+    }
+
+    private StringBuilder languageBuilder (MapInfo mapInfo) {
+        StringBuilder builderLang = new StringBuilder();
+        List<String> languagesList = mapInfo.getLanguages();
+
+        for (int i = 0; i < languagesList.size(); i++) {
+            Locale locale = new Locale(languagesList.get(i));
+            builderLang.append(locale.getDisplayLanguage());
+
+            if (i < languagesList.size() - 1) {
+                builderLang.append(", ");
+            }
+        }
+
+        return builderLang;
     }
 }

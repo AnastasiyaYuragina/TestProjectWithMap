@@ -4,7 +4,6 @@ import android.support.multidex.MultiDexApplication;
 import com.raizlabs.android.dbflow.config.FlowConfig;
 import com.raizlabs.android.dbflow.config.FlowManager;
 
-
 /**
  * Created by anastasiyayuragina on 8/1/16.
  *
