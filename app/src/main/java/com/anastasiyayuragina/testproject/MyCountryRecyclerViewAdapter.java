@@ -66,14 +66,11 @@ public class MyCountryRecyclerViewAdapter extends RecyclerView.Adapter<MyCountry
         holder.country = viewModel;
         holder.countryName.setText("Country: " + viewModel.getName());
         holder.countryRegion.setText("Region: " + viewModel.getRegion().getValue());
-        holder.view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != listener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    listener.onListFragmentInteraction(holder.country);
-                }
+        holder.view.setOnClickListener(v -> {
+            if (null != listener) {
+                // Notify the active callbacks interface (the activity, if the
+                // fragment is attached to one) that an item has been selected.
+                listener.onListFragmentInteraction(holder.country);
             }
         });
     }
@@ -87,12 +84,7 @@ public class MyCountryRecyclerViewAdapter extends RecyclerView.Adapter<MyCountry
     public void setLoading(boolean loading) {
         this.loading = loading;
 
-        new Handler().post(new Runnable() {
-            @Override
-            public void run() {
-                notifyDataSetChanged();
-            }
-        });
+        new Handler().post(this::notifyDataSetChanged);
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {

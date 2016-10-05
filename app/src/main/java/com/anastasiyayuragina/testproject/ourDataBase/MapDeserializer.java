@@ -23,7 +23,7 @@ class MapDeserializer extends JsonDeserializer<MapItem> {
         ObjectMapper mapper = new ObjectMapper();
         TreeNode treeNode = p.readValueAsTree();
 
-        mapItem.setInfoForMap((MapInfo) mapper.readerFor(new TypeReference<MapInfo>() {})
+        mapItem.setInfoForMap(mapper.readerFor(new TypeReference<MapInfo>() {})
                 .readValue((JsonNode) treeNode.get(0)));
 
         return mapItem;

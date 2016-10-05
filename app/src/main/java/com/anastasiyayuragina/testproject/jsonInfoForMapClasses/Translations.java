@@ -1,4 +1,3 @@
-
 package com.anastasiyayuragina.testproject.jsonInfoForMapClasses;
 
 import java.util.HashMap;
@@ -19,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "ja",
     "it"
 })
-public class Translations {
+class Translations {
 
     @JsonProperty("de")
     private String de;

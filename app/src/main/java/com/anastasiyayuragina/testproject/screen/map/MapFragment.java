@@ -14,11 +14,8 @@ import com.anastasiyayuragina.testproject.jsonInfoForMapClasses.MapInfo;
 import com.anastasiyayuragina.testproject.ourDataBase.MapItem;
 import com.anastasiyayuragina.testproject.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.raizlabs.android.dbflow.sql.language.Select;
 import java.util.List;
@@ -133,26 +130,20 @@ public class MapFragment extends Fragment implements MapMvp.ViewMap{
 
         final StringBuilder countryInfoBuilder = countryInfoBuilder(mapInfo);
 
-        mapView.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(final GoogleMap googleMap) {
-                googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)));
-                googleMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude)));
-                googleMap.animateCamera(CameraUpdateFactory.zoomTo(4));
+        mapView.getMapAsync(googleMap -> {
+            googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)));
+            googleMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude)));
+            googleMap.animateCamera(CameraUpdateFactory.zoomTo(4));
 
-                googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                    @Override
-                    public boolean onMarkerClick(Marker marker) {
-                        marker.setTitle(mapInfo.getCapital());
+            googleMap.setOnMarkerClickListener(marker -> {
+                marker.setTitle(mapInfo.getCapital());
 
-                        Boolean isVisibility = countryInfo.getVisibility() == View.INVISIBLE;
-                        countryInfo.setVisibility(isVisibility ? View.VISIBLE : View.INVISIBLE);
-                        countryInfo.setText(isVisibility ? countryInfoBuilder.toString() : " ");
+                Boolean isVisibility = countryInfo.getVisibility() == View.INVISIBLE;
+                countryInfo.setVisibility(isVisibility ? View.VISIBLE : View.INVISIBLE);
+                countryInfo.setText(isVisibility ? countryInfoBuilder.toString() : " ");
 
-                        return false;
-                    }
-                });
-            }
+                return false;
+            });
         });
     }
 

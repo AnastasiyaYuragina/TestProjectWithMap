@@ -3,7 +3,6 @@ package com.anastasiyayuragina.testproject.jsonCountriesClasses;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import com.anastasiyayuragina.testproject.ourDataBase.CountriesDatabase;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
@@ -178,7 +177,7 @@ public class Country extends BaseModel {
         this.comment = comment;
     }
 
-    public int getPage() {
+    int getPage() {
         return page;
     }
 

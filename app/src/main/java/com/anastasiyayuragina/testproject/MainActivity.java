@@ -97,7 +97,6 @@ public class MainActivity extends AppCompatActivity implements CountryFragment.O
     @Override
     public void onStop() {
         super.onStop();
-
         Action viewAction = setViewAction();
         AppIndex.AppIndexApi.end(client, viewAction);
         client.disconnect();
