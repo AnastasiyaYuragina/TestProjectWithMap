@@ -14,7 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 import com.anastasiyayuragina.testproject.EndlessRecyclerOnScrollListener;
-import com.anastasiyayuragina.testproject.InternetConnectionObserver;
+import com.anastasiyayuragina.testproject.InternetConnectionObservable;
 import com.anastasiyayuragina.testproject.jsonCountriesClasses.Country;
 import com.anastasiyayuragina.testproject.MyCountryRecyclerViewAdapter;
 import com.anastasiyayuragina.testproject.R;
@@ -32,7 +32,6 @@ public class CountryFragment extends Fragment implements CountriesMvp.View {
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener listener;
     private MyCountryRecyclerViewAdapter adapter;
-    private static InternetConnectionObserver observer = new InternetConnectionObserver();
     private CountriesMvp.Presenter presenter;
     private ProgressDialog progressDialog;
 
@@ -112,21 +111,17 @@ public class CountryFragment extends Fragment implements CountriesMvp.View {
         return isConnected;
     }
 
-    public InternetConnectionObserver getObserver() {
-        return observer;
-    }
-
     @Override
     public void onStart() {
         super.onStart();
-        observer.addObserver((Observer) presenter);
+        InternetConnectionObservable.getInstance().addObserver((Observer) presenter);
     }
 
     @Override
     public void onStop() {
         super.onStop();
         progressDialog.dismiss();
-        observer.deleteObservers();
+        InternetConnectionObservable.getInstance().deleteObservers();
     }
 
     @Override

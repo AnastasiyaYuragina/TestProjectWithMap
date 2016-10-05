@@ -86,15 +86,6 @@ public class MainActivity extends AppCompatActivity implements CountryFragment.O
         super.onResume();
         receiver = new InternetConnectionReceiver();
         registerReceiver(receiver, new IntentFilter(Context.CONNECTIVITY_SERVICE));
-
-        Fragment fragment;
-        manager = getSupportFragmentManager();
-        fragment = manager.findFragmentByTag(FragmentType.COUNTRY_LIST.name());
-        CountryFragment countryFragment = (CountryFragment) fragment;
-
-        if (receiver != null && countryFragment.getObserver() != null) {
-            receiver.setObserver(countryFragment.getObserver());
-        }
     }
 
     @Override

@@ -8,7 +8,7 @@ import com.raizlabs.android.dbflow.annotation.Database;
  */
 @Database(name = CountriesDatabase.NAME, version = CountriesDatabase.VERSION)
 public class CountriesDatabase {
-    public static final String NAME = "CountriesDataBase";
-    public static final int VERSION = 1;
+    static final String NAME = "CountriesDataBase";
+    static final int VERSION = 1;
 }
 

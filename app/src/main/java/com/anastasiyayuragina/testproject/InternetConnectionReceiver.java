@@ -12,11 +12,9 @@ import android.widget.Toast;
  *
  */
 public class InternetConnectionReceiver extends BroadcastReceiver {
-    private static InternetConnectionObserver observer;
 
     @Override
     public void onReceive(Context context, Intent intent) {
-
         boolean isConnected = false;
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
@@ -26,14 +24,9 @@ public class InternetConnectionReceiver extends BroadcastReceiver {
         }
 
         if(isConnected) {
-            observer.dataChanged();
+            InternetConnectionObservable.getInstance().dataChanged();
         } else {
             Toast.makeText(context, "no internet", Toast.LENGTH_SHORT).show();
         }
     }
-
-    public void setObserver(InternetConnectionObserver observer) {
-        InternetConnectionReceiver.observer = observer;
-    }
-
 }
