@@ -15,13 +15,16 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
+import rx.Observable;
+import rx.Subscription;
 
 /**
  * Created by anastasiya yuragina on 8/2/16.
  *
  */
 class CountriesModel implements CountriesMvp.Model {
-    private CountryItem CountryItem;
+    private List<Country> list;
+    private PageInfo pageInfo;
 
     @Override
     public void loadData(final int page, final OnDataLoaded listener) {
@@ -33,21 +36,28 @@ class CountriesModel implements CountriesMvp.Model {
                     .addConverterFactory(JacksonConverterFactory.create())
                     .build();
             CountriesAPIService service = retrofit.create(CountriesAPIService.class);
-            Call<CountryItem> itemCall = service.loadItem(pageParam(String.valueOf(page)));
-            itemCall.enqueue(new Callback<CountryItem>() {
-                @Override
-                public void onResponse(Call<CountryItem> call, Response<CountryItem> response) {
-                    CountryItem = response.body();
+//            Observable<CountryItem> itemCall = service.loadItem(pageParam(String.valueOf(page)));
+            Observable.just(
+                    service.loadItem(pageParam(String.valueOf(page)))
+                    .subscribe(this::onLoadCountryItem)
+            );
 
-                    listener.onDataLoaded(CountryItem.getCountryList(), CountryItem.getPageInfo());
-
-                    saveIntoDB(CountryItem.getCountryList(), page);
-                }
-
-                @Override
-                public void onFailure(Call<CountryItem> call, Throwable t) {
-                }
-            });
+            listener.onDataLoaded(list, pageInfo);
+            saveIntoDB(list, page);
+//            itemCall.enqueue(new Callback<CountryItem>() {
+//                @Override
+//                public void onResponse(Call<CountryItem> call, Response<CountryItem> response) {
+//                    CountryItem = response.body();
+//
+//                    listener.onDataLoaded(CountryItem.getCountryList(), CountryItem.getPageInfo());
+//
+//                    saveIntoDB(CountryItem.getCountryList(), page);
+//                }
+//
+//                @Override
+//                public void onFailure(Call<CountryItem> call, Throwable t) {
+//                }
+//            });
         } else {
             PageInfo pageInfo = new PageInfo();
             pageInfo.setPage(page);
@@ -64,6 +74,11 @@ class CountriesModel implements CountriesMvp.Model {
         urlParams.put("page", page);
 
         return urlParams;
+    }
+
+    private void onLoadCountryItem(CountryItem countryItem) {
+        list = countryItem.getCountryList();
+        pageInfo = countryItem.getPageInfo();
     }
 
     private void saveIntoDB (List<Country> itemCountry, int page) {
