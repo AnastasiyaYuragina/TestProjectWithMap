@@ -2,6 +2,7 @@ package com.anastasiyayuragina.testproject.screen.country_list;
 
 import android.support.v4.util.ArrayMap;
 import com.anastasiyayuragina.testproject.CountriesAPIService;
+import com.anastasiyayuragina.testproject.RetrofitSingleton;
 import com.anastasiyayuragina.testproject.jsonCountriesClasses.Country;
 import com.anastasiyayuragina.testproject.jsonCountriesClasses.Country_Table;
 import com.anastasiyayuragina.testproject.jsonCountriesClasses.PageInfo;
@@ -10,11 +11,7 @@ import com.anastasiyayuragina.testproject.ourDataBase.CountryItem;
 import com.raizlabs.android.dbflow.sql.language.Select;
 import java.util.List;
 import java.util.Map;
-import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
-import retrofit2.converter.jackson.JacksonConverterFactory;
 import rx.Observable;
-import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -23,7 +20,6 @@ import rx.schedulers.Schedulers;
  *
  */
 class CountriesModel implements CountriesMvp.Model {
-    private List<Country> list;
     private PageInfo pageInfo;
 
     @Override
@@ -31,39 +27,19 @@ class CountriesModel implements CountriesMvp.Model {
         List<Country> countryTable = new Select().from(Country.class).where(Country_Table.page.is(page)).queryList();
 
         if (countryTable.isEmpty()) {
-            Retrofit retrofit = new Retrofit.Builder()
-                    .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                    .baseUrl("http://api.worldbank.org/")
-                    .addConverterFactory(JacksonConverterFactory.create())
-                    .build();
-            CountriesAPIService service = retrofit.create(CountriesAPIService.class);
-
+            CountriesAPIService service = RetrofitSingleton.getInstance().getRetrofit().create(CountriesAPIService.class);
             Observable<CountryItem> itemCall = service.loadItem(pageParam(String.valueOf(page)));
-
             itemCall.subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Subscriber<CountryItem>() {
-                        @Override
-                        public void onCompleted() {
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-                        }
-
-                        @Override
-                        public void onNext(CountryItem countryItem) {
-                            list = countryItem.getCountryList();
-                            pageInfo = countryItem.getPageInfo();
-                            listener.onDataLoaded(list, pageInfo);
-                            saveIntoDB(list, page);
-                        }
+                    .doOnNext(countryItem -> pageInfo = countryItem.getPageInfo())
+                    .subscribe(countryItem -> {
+                        listener.onDataLoaded(countryItem.getCountryList(), pageInfo);
+                        saveIntoDB(countryItem.getCountryList(), page);
                     });
         } else {
             PageInfo pageInfo = new PageInfo();
             pageInfo.setPage(page);
             pageInfo.setPages(page + 1);
-
             listener.onDataLoaded(countryTable, pageInfo);
         }
     }

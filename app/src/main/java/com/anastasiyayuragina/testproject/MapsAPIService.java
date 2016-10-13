@@ -2,7 +2,7 @@ package com.anastasiyayuragina.testproject;
 
 import com.anastasiyayuragina.testproject.ourDataBase.MapItem;
 import retrofit2.http.GET;
-import retrofit2.http.Path;
+import retrofit2.http.Url;
 import rx.Observable;
 
 /**
@@ -10,7 +10,7 @@ import rx.Observable;
  *
  */
 public interface MapsAPIService {
-    @GET("rest/v1/name/{country}")
-    Observable<MapItem> loadItem(@Path("country") String country);
+    @GET
+    Observable<MapItem> loadItem(@Url String url);
 }
 
