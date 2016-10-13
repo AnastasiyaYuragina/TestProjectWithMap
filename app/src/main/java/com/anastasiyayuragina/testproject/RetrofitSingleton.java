@@ -9,12 +9,13 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
  *
  */
 
-public class RetrofitSingleton {
+class RetrofitSingleton {
     private static RetrofitSingleton instance;
     private Retrofit retrofit;
 
-    public static RetrofitSingleton getInstance() {
+    static RetrofitSingleton getInstance() {
         RetrofitSingleton localInstance = instance;
+
         if (localInstance == null) {
             synchronized (RetrofitSingleton.class) {
                 localInstance = instance;
@@ -34,7 +35,7 @@ public class RetrofitSingleton {
                 .build();
     }
 
-    public Retrofit getRetrofit() {
+    Retrofit getRetrofit() {
         return retrofit;
     }
 }

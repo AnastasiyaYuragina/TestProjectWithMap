@@ -1,8 +1,7 @@
 package com.anastasiyayuragina.testproject.screen.country_list;
 
 import android.support.v4.util.ArrayMap;
-import com.anastasiyayuragina.testproject.CountriesAPIService;
-import com.anastasiyayuragina.testproject.RetrofitSingleton;
+import com.anastasiyayuragina.testproject.ServiceSingleton;
 import com.anastasiyayuragina.testproject.jsonCountriesClasses.Country;
 import com.anastasiyayuragina.testproject.jsonCountriesClasses.Country_Table;
 import com.anastasiyayuragina.testproject.jsonCountriesClasses.PageInfo;
@@ -24,11 +23,13 @@ class CountriesModel implements CountriesMvp.Model {
 
     @Override
     public void loadData(final int page, final OnDataLoaded listener) {
+
         List<Country> countryTable = new Select().from(Country.class).where(Country_Table.page.is(page)).queryList();
 
         if (countryTable.isEmpty()) {
-            CountriesAPIService service = RetrofitSingleton.getInstance().getRetrofit().create(CountriesAPIService.class);
-            Observable<CountryItem> itemCall = service.loadItem(pageParam(String.valueOf(page)));
+            Observable<CountryItem> itemCall = ServiceSingleton.getInstance().getAPIServices()
+                    .loadCountryItem(pageParam(String.valueOf(page)));
+
             itemCall.subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnNext(countryItem -> pageInfo = countryItem.getPageInfo())
