@@ -47,6 +47,8 @@ public class CountryFragment extends Fragment implements CountriesMvp.View {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+//        setRetainInstance(true);
+
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
@@ -121,6 +123,7 @@ public class CountryFragment extends Fragment implements CountriesMvp.View {
     public void onStop() {
         super.onStop();
         progressDialog.dismiss();
+        presenter.onStop();
         InternetConnectionObservable.getInstance().deleteObservers();
     }
 
@@ -149,12 +152,6 @@ public class CountryFragment extends Fragment implements CountriesMvp.View {
     @Override
     public void showLoadMore() {
         adapter.setLoading(true);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        presenter.onDestroy();
     }
 
     /**

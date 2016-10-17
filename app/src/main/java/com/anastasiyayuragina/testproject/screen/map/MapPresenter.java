@@ -23,11 +23,18 @@ class MapPresenter implements MapMvp.PresenterMap, MapMvp.ModelMap.OnDataLoadedM
 
     @Override
     public void onDataLoadedMap(MapItem mapItem) {
-        viewMap.setMapMarker(mapItem);
+        if (viewMap != null) {
+            viewMap.setMapMarker(mapItem);
+        }
     }
 
     public void setCountryName(String countryName) {
         this.countryName = countryName;
+    }
+
+    @Override
+    public void onStop() {
+        viewMap = null;
     }
 
 

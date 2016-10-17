@@ -55,7 +55,13 @@ public class MainActivity extends AppCompatActivity implements CountryFragment.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        replaceFragment(FragmentType.COUNTRY_LIST);
+        manager = getSupportFragmentManager();
+
+        if (manager.findFragmentByTag(FragmentType.MAP.name()) != null) {
+            replaceFragment(FragmentType.MAP);
+        } else {
+            replaceFragment(FragmentType.COUNTRY_LIST);
+        }
 
         getApplication();
         // ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -104,7 +110,6 @@ public class MainActivity extends AppCompatActivity implements CountryFragment.O
 
     void replaceFragment(FragmentType type) {
         Fragment fragment;
-        manager = getSupportFragmentManager();
         fragment = manager.findFragmentByTag(type.name());
 
         if (fragment == null) {
@@ -113,6 +118,8 @@ public class MainActivity extends AppCompatActivity implements CountryFragment.O
 
         FragmentTransaction transaction = manager.beginTransaction();
         if (type.equals(FragmentType.COUNTRY_LIST)) {
+            transaction.replace(R.id.container, fragment, type.name()).commit();
+        } else if (type.equals(FragmentType.MAP)) {
             transaction.replace(R.id.container, fragment, type.name()).commit();
         }
     }

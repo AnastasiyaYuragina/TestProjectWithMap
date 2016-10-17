@@ -10,6 +10,7 @@ interface MapMvp {
     interface PresenterMap {
         void loadData();
         void setCountryName(String countryName);
+        void onStop();
     }
 
     interface ViewMap {

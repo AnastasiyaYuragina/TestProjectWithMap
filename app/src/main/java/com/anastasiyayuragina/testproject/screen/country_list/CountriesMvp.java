@@ -11,7 +11,7 @@ import java.util.List;
 interface CountriesMvp {
     interface Presenter{
         void loadData();
-        void onDestroy();
+        void onStop();
         boolean isDataLoaded();
     }
     interface View{

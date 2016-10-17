@@ -39,7 +39,7 @@ class CountriesPresenter implements CountriesMvp.Presenter, CountriesMvp.Model.O
     }
 
     @Override
-    public void onDestroy() {
+    public void onStop() {
         view = null;
     }
 

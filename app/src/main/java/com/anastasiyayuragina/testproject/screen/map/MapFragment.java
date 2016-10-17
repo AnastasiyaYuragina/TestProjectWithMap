@@ -37,6 +37,7 @@ public class MapFragment extends Fragment implements MapMvp.ViewMap{
     private String countryId;
     private TextView countryInfo;
     private EditText comment;
+    private MapMvp.PresenterMap presenterMap;
 
     public static MapFragment newInstance(String countryName, String latitude, String longitude, String id) {
 
@@ -53,6 +54,8 @@ public class MapFragment extends Fragment implements MapMvp.ViewMap{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setRetainInstance(true);
 
         countryName = getArguments().getString(COUNTRY_NAME);
         countryId = getArguments().getString(COUNTRY_ID);
@@ -72,7 +75,7 @@ public class MapFragment extends Fragment implements MapMvp.ViewMap{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.map_fragment, container, false);
         mapView = (MapView) view.findViewById(R.id.map);
-        MapMvp.PresenterMap presenterMap = new MapPresenter(this);
+        presenterMap = new MapPresenter(this);
         countryInfo = (TextView) view.findViewById(R.id.about_country);
         comment = (EditText) view.findViewById(R.id.editComment);
 
@@ -104,6 +107,13 @@ public class MapFragment extends Fragment implements MapMvp.ViewMap{
             countryComment.save();
         }
         mapView.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mapView.onStop();
+        presenterMap.onStop();
     }
 
     @Override
