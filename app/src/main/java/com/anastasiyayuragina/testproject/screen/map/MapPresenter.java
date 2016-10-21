@@ -1,6 +1,9 @@
 package com.anastasiyayuragina.testproject.screen.map;
 
+import com.anastasiyayuragina.testproject.jsonCountriesClasses.Country;
+import com.anastasiyayuragina.testproject.jsonCountriesClasses.Country_Table;
 import com.anastasiyayuragina.testproject.ourDataBase.MapItem;
+import com.raizlabs.android.dbflow.sql.language.Select;
 
 /**
  * Created by anastasiyayuragina on 8/10/16.
@@ -11,8 +14,7 @@ class MapPresenter implements MapMvp.PresenterMap, MapMvp.ModelMap.OnDataLoadedM
     private MapMvp.ViewMap viewMap;
     private String countryName;
 
-    MapPresenter(MapMvp.ViewMap viewMap) {
-        this.viewMap = viewMap;
+    MapPresenter() {
         this.modelMap = new MapModel();
     }
 
@@ -28,7 +30,8 @@ class MapPresenter implements MapMvp.PresenterMap, MapMvp.ModelMap.OnDataLoadedM
         }
     }
 
-    public void setCountryName(String countryName) {
+    @Override
+    public void initCountry(String countryName) {
         this.countryName = countryName;
     }
 
@@ -37,5 +40,21 @@ class MapPresenter implements MapMvp.PresenterMap, MapMvp.ModelMap.OnDataLoadedM
         viewMap = null;
     }
 
+    @Override
+    public void addInDB(String comment, String countryId) {
+        if (!comment.isEmpty()) {
+            Country countryComment = new Select()
+                    .from(Country.class)
+                    .where(Country_Table.id.is(countryId))
+                    .querySingle();
+            assert countryComment != null;
+            countryComment.setComment(comment);
+            countryComment.save();
+        }
+    }
 
+    @Override
+    public void setView(MapMvp.ViewMap viewMap) {
+        this.viewMap = viewMap;
+    }
 }

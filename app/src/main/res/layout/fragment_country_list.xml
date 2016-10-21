@@ -11,4 +11,5 @@
     android:layout_marginRight="16dp"
     app:layoutManager="LinearLayoutManager"
     tools:context=".screen.country_list.CountryFragment"
-    tools:listitem="@layout/fragment_country" />
+    tools:listitem="@layout/fragment_country"
+    android:scrollbars="vertical" />

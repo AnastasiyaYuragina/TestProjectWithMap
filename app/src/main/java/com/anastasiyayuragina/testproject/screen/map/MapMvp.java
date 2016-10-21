@@ -9,8 +9,10 @@ import com.anastasiyayuragina.testproject.ourDataBase.MapItem;
 interface MapMvp {
     interface PresenterMap {
         void loadData();
-        void setCountryName(String countryName);
+        void initCountry(String countryName);
         void onStop();
+        void addInDB(String comment, String countryId);
+        void setView(MapMvp.ViewMap viewMap);
     }
 
     interface ViewMap {

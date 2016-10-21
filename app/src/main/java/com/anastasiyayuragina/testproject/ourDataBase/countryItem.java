@@ -18,7 +18,7 @@ public class CountryItem {
         return pageInfo;
     }
 
-    void setPageInfo(PageInfo pageInfo) {
+    public void setPageInfo(PageInfo pageInfo) {
         this.pageInfo = pageInfo;
     }
 
@@ -26,7 +26,7 @@ public class CountryItem {
         return countryList;
     }
 
-    void setCountryList(List<Country> countryList) {
+    public void setCountryList(List<Country> countryList) {
         this.countryList = countryList;
     }
 }

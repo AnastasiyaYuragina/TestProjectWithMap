@@ -8,8 +8,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.anastasiyayuragina.testproject.jsonCountriesClasses.Country;
-import com.anastasiyayuragina.testproject.jsonCountriesClasses.Country_Table;
 import com.anastasiyayuragina.testproject.jsonInfoForMapClasses.MapInfo;
 import com.anastasiyayuragina.testproject.ourDataBase.MapItem;
 import com.anastasiyayuragina.testproject.R;
@@ -17,7 +15,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.raizlabs.android.dbflow.sql.language.Select;
 import java.util.List;
 import java.util.Locale;
 
@@ -54,9 +51,9 @@ public class MapFragment extends Fragment implements MapMvp.ViewMap{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setRetainInstance(true);
 
+        presenterMap = new MapPresenter();
         countryName = getArguments().getString(COUNTRY_NAME);
         countryId = getArguments().getString(COUNTRY_ID);
 
@@ -75,16 +72,22 @@ public class MapFragment extends Fragment implements MapMvp.ViewMap{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.map_fragment, container, false);
         mapView = (MapView) view.findViewById(R.id.map);
-        presenterMap = new MapPresenter(this);
         countryInfo = (TextView) view.findViewById(R.id.about_country);
         comment = (EditText) view.findViewById(R.id.editComment);
 
-        presenterMap.setCountryName(countryName);
+        presenterMap.initCountry(countryName);
         presenterMap.loadData();
 
         mapView.onCreate(savedInstanceState);
 
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mapView.onStart();
+        presenterMap.setView(this);
     }
 
     @Override
@@ -97,15 +100,7 @@ public class MapFragment extends Fragment implements MapMvp.ViewMap{
     public void onPause() {
         super.onPause();
         String commentString = comment.getText().toString();
-        if (!commentString.isEmpty()) {
-            Country countryComment = new Select()
-                    .from(Country.class)
-                    .where(Country_Table.id.is(countryId))
-                    .querySingle();
-            assert countryComment != null;
-            countryComment.setComment(commentString);
-            countryComment.save();
-        }
+        presenterMap.addInDB(commentString, countryId);
         mapView.onPause();
     }
 

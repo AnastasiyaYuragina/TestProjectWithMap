@@ -1,5 +1,7 @@
 package com.anastasiyayuragina.testproject.screen.country_list;
 
+import android.content.Context;
+
 import com.anastasiyayuragina.testproject.jsonCountriesClasses.PageInfo;
 import com.anastasiyayuragina.testproject.jsonCountriesClasses.Country;
 import java.util.List;
@@ -13,6 +15,8 @@ interface CountriesMvp {
         void loadData();
         void onStop();
         boolean isDataLoaded();
+        void setView(CountriesMvp.View view);
+        void setProgressDialog (Context context);
     }
     interface View{
         void setData(List<Country> countryList);
@@ -21,6 +25,7 @@ interface CountriesMvp {
     interface Model{
         interface OnDataLoaded{
             void onDataLoaded(List<Country> countryList, PageInfo pageInfo);
+            void onError(Throwable error);
         }
         void loadData(int page, OnDataLoaded listener);
     }

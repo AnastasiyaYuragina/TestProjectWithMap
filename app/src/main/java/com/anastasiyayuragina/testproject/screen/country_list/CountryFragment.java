@@ -1,9 +1,6 @@
 package com.anastasiyayuragina.testproject.screen.country_list;
 
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -12,14 +9,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 import com.anastasiyayuragina.testproject.EndlessRecyclerOnScrollListener;
-import com.anastasiyayuragina.testproject.InternetConnectionObservable;
 import com.anastasiyayuragina.testproject.jsonCountriesClasses.Country;
 import com.anastasiyayuragina.testproject.MyCountryRecyclerViewAdapter;
 import com.anastasiyayuragina.testproject.R;
 import java.util.List;
-import java.util.Observer;
 
 /**
  * A fragment representing a list of Items.
@@ -33,7 +27,6 @@ public class CountryFragment extends Fragment implements CountriesMvp.View {
     private OnListFragmentInteractionListener listener;
     private MyCountryRecyclerViewAdapter adapter;
     private CountriesMvp.Presenter presenter;
-    private ProgressDialog progressDialog;
 
     public static CountryFragment newInstance(int columnCount) {
         CountryFragment fragment = new CountryFragment();
@@ -46,8 +39,9 @@ public class CountryFragment extends Fragment implements CountriesMvp.View {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
 
-//        setRetainInstance(true);
+        presenter = new CountriesPresenter();
 
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
@@ -57,28 +51,23 @@ public class CountryFragment extends Fragment implements CountriesMvp.View {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_country_list, container, false);
-        presenter = new CountriesPresenter(this);
 
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
+            adapter = new MyCountryRecyclerViewAdapter(listener);
             RecyclerView recyclerView = (RecyclerView) view;
-
             RecyclerView.LayoutManager layoutManager = mColumnCount <= 1 ? new LinearLayoutManager(context)
                     : new GridLayoutManager(context, mColumnCount);
 
             recyclerView.setLayoutManager(layoutManager);
-
-            adapter = new MyCountryRecyclerViewAdapter(listener);
             recyclerView.setAdapter(adapter);
 
-            setProgressDialog(context, presenter);
+            presenter.setProgressDialog(context);
+            presenter.loadData();
 
             recyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener((LinearLayoutManager) layoutManager) {
                 @Override
                 public void onLoadMore() {
-                    if (presenter.isDataLoaded()) {
-                        progressDialog.dismiss();
-                    }
                     presenter.loadData();
                 }
             });
@@ -87,44 +76,16 @@ public class CountryFragment extends Fragment implements CountriesMvp.View {
         return view;
     }
 
-    private void setProgressDialog (Context context, CountriesMvp.Presenter presenter) {
-        progressDialog = new ProgressDialog(context);
-        if (!presenter.isDataLoaded()) {
-            progressDialog.setProgressStyle(R.layout.progress_bar_item);
-            progressDialog.show();
-
-            if (!isInternetConnection(context)) {
-                Toast.makeText(context, "no internet", Toast.LENGTH_SHORT).show();
-            } else {
-                presenter.loadData();
-            }
-        }
-    }
-
-    private boolean isInternetConnection(Context context) {
-        boolean isConnected = false;
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-
-        if (activeNetwork != null) {
-            isConnected = activeNetwork.isConnectedOrConnecting();
-        }
-
-        return isConnected;
-    }
-
     @Override
     public void onStart() {
         super.onStart();
-        InternetConnectionObservable.getInstance().addObserver((Observer) presenter);
+        presenter.setView(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        progressDialog.dismiss();
         presenter.onStop();
-        InternetConnectionObservable.getInstance().deleteObservers();
     }
 
     @Override
@@ -146,7 +107,6 @@ public class CountryFragment extends Fragment implements CountriesMvp.View {
     @Override
     public void setData(List<Country> countryList) {
         adapter.addItems(countryList);
-        progressDialog.dismiss();
     }
 
     @Override

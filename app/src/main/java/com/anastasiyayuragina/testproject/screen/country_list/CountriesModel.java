@@ -24,25 +24,39 @@ class CountriesModel implements CountriesMvp.Model {
     @Override
     public void loadData(final int page, final OnDataLoaded listener) {
 
-        List<Country> countryTable = new Select().from(Country.class).where(Country_Table.page.is(page)).queryList();
+        requestCacheCountryList(page)
+                .filter(countryItem -> !countryItem.getCountryList().isEmpty())
+                .switchIfEmpty(requestNetworkCountryList(page))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        countryItem -> {
+                            listener.onDataLoaded(countryItem.getCountryList(), pageInfo);
+                        },
+                        listener::onError);
+    }
 
-        if (countryTable.isEmpty()) {
-            Observable<CountryItem> itemCall = ServiceSingleton.getInstance().getAPIServices()
-                    .loadCountryItem(pageParam(String.valueOf(page)));
+    private Observable<CountryItem> requestCacheCountryList(int page) {
+        return Observable.fromCallable(() -> {
+            List<Country> countryList = new Select().from(Country.class).where(Country_Table.page.is(page)).queryList();
+            CountryItem countryItem = new CountryItem();
+            countryItem.setPageInfo(new PageInfo());
+            countryItem.getPageInfo().setPage(page);
+            countryItem.getPageInfo().setPages(page + 1);
+            countryItem.setCountryList(countryList);
+            return countryItem;
+        })
+                .subscribeOn(Schedulers.io());
+    }
 
-            itemCall.subscribeOn(Schedulers.newThread())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .doOnNext(countryItem -> pageInfo = countryItem.getPageInfo())
-                    .subscribe(countryItem -> {
-                        listener.onDataLoaded(countryItem.getCountryList(), pageInfo);
-                        saveIntoDB(countryItem.getCountryList(), page);
-                    });
-        } else {
-            PageInfo pageInfo = new PageInfo();
-            pageInfo.setPage(page);
-            pageInfo.setPages(page + 1);
-            listener.onDataLoaded(countryTable, pageInfo);
-        }
+    private Observable<CountryItem> requestNetworkCountryList(int page) {
+
+        return ServiceSingleton.getInstance()
+                .getAPIServices()
+                .loadCountryItem(pageParam(String.valueOf(page)))
+                .doOnNext(countryItem -> saveIntoDB(countryItem.getCountryList(), page))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(countryItem -> pageInfo = countryItem.getPageInfo());
     }
 
     private Map<String, String> pageParam(String page) {
