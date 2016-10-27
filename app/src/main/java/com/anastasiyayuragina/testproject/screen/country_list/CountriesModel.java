@@ -37,15 +37,15 @@ class CountriesModel implements CountriesMvp.Model {
 
     private Observable<CountryItem> requestCacheCountryList(int page) {
         return Observable.fromCallable(() -> {
-            List<Country> countryList = new Select().from(Country.class).where(Country_Table.page.is(page)).queryList();
+            List<Country> countryList = new Select().from(Country.class)
+                    .where(Country_Table.page.is(page)).queryList();
             CountryItem countryItem = new CountryItem();
             countryItem.setPageInfo(new PageInfo());
             countryItem.getPageInfo().setPage(page);
             countryItem.getPageInfo().setPages(page + 1);
             countryItem.setCountryList(countryList);
             return countryItem;
-        })
-                .subscribeOn(Schedulers.io());
+        }).subscribeOn(Schedulers.io());
     }
 
     private Observable<CountryItem> requestNetworkCountryList(int page) {
@@ -69,20 +69,20 @@ class CountriesModel implements CountriesMvp.Model {
     }
 
     private void saveIntoDB (List<Country> itemCountry, int page) {
-        for (int i = 0; i < itemCountry.size(); i++) {
-            Country countryListItem = itemCountry.get(i);
+
+        for (Country countries : itemCountry) {
             Country country = new Country();
             Region region = new Region();
 
-            region.setId(countryListItem.getRegion().getId());
-            region.setValue(countryListItem.getRegion().getValue());
+            region.setId(countries.getRegion().getId());
+            region.setValue(countries.getRegion().getValue());
             region.save();
 
-            country.setId(countryListItem.getId());
-            country.setName(countryListItem.getName());
+            country.setId(countries.getId());
+            country.setName(countries.getName());
             country.setRegion(region);
-            country.setLatitude(countryListItem.getLatitude());
-            country.setLongitude(countryListItem.getLongitude());
+            country.setLatitude(countries.getLatitude());
+            country.setLongitude(countries.getLongitude());
             country.setPage(page);
             country.save();
         }
