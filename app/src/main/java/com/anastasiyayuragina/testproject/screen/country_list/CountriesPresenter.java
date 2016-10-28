@@ -1,9 +1,6 @@
 package com.anastasiyayuragina.testproject.screen.country_list;
 
-import android.app.ProgressDialog;
-import android.content.Context;
 import com.anastasiyayuragina.testproject.InternetConnectionObservable;
-import com.anastasiyayuragina.testproject.R;
 import com.anastasiyayuragina.testproject.jsonCountriesClasses.PageInfo;
 import com.anastasiyayuragina.testproject.jsonCountriesClasses.Country;
 import java.util.List;
@@ -20,7 +17,6 @@ class CountriesPresenter implements CountriesMvp.Presenter, CountriesMvp.Model.O
     private CountriesMvp.View view;
     private PageInfo pageInfo = null;
     private boolean dataLoaded = false;
-    private ProgressDialog progressDialog;
 
     CountriesPresenter() {
         this.model = new CountriesModel();
@@ -45,9 +41,9 @@ class CountriesPresenter implements CountriesMvp.Presenter, CountriesMvp.Model.O
 
     @Override
     public void onStop() {
+        view.hideProgressDialog();
         view = null;
         pageInfo = null;
-        progressDialog.dismiss();
         InternetConnectionObservable.getInstance().deleteObservers();
     }
 
@@ -55,7 +51,7 @@ class CountriesPresenter implements CountriesMvp.Presenter, CountriesMvp.Model.O
     public void onDataLoaded(List<Country> countryList, PageInfo pageInfo) {
         if(view != null){
             view.setData(countryList);
-            progressDialog.dismiss();
+            view.hideProgressDialog();
             dataLoaded = true;
         }
 
@@ -78,11 +74,9 @@ class CountriesPresenter implements CountriesMvp.Presenter, CountriesMvp.Model.O
     }
 
     @Override
-    public void setProgressDialog(Context context) {
-        progressDialog = new ProgressDialog(context);
+    public void setProgressDialog() {
         if (!isDataLoaded()) {
-            progressDialog.setProgressStyle(R.layout.progress_bar_item);
-            progressDialog.show();
+            view.showProgressDialog();
         }
     }
 

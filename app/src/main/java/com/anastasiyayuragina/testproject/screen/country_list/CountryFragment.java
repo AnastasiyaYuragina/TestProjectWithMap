@@ -1,5 +1,6 @@
 package com.anastasiyayuragina.testproject.screen.country_list;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -27,6 +28,7 @@ public class CountryFragment extends Fragment implements CountriesMvp.View {
     private OnListFragmentInteractionListener listener;
     private MyCountryRecyclerViewAdapter adapter;
     private CountriesMvp.Presenter presenter;
+    private ProgressDialog progressDialog;
 
     public static CountryFragment newInstance(int columnCount) {
         CountryFragment fragment = new CountryFragment();
@@ -62,7 +64,6 @@ public class CountryFragment extends Fragment implements CountriesMvp.View {
             recyclerView.setLayoutManager(layoutManager);
             recyclerView.setAdapter(adapter);
 
-            presenter.setProgressDialog(context);
             presenter.loadData();
 
             recyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener((LinearLayoutManager) layoutManager) {
@@ -80,6 +81,7 @@ public class CountryFragment extends Fragment implements CountriesMvp.View {
     public void onStart() {
         super.onStart();
         presenter.setView(this);
+        presenter.setProgressDialog();
     }
 
     @Override
@@ -112,6 +114,18 @@ public class CountryFragment extends Fragment implements CountriesMvp.View {
     @Override
     public void showLoadMore() {
         adapter.setLoading(true);
+    }
+
+    @Override
+    public void showProgressDialog() {
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setProgressStyle(R.layout.progress_bar_item);
+        progressDialog.show();
+    }
+
+    @Override
+    public void hideProgressDialog() {
+        progressDialog.dismiss();
     }
 
     /**

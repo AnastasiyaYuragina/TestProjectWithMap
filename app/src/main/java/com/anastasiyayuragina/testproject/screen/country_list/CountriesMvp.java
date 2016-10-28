@@ -16,11 +16,13 @@ interface CountriesMvp {
         void onStop();
         boolean isDataLoaded();
         void setView(CountriesMvp.View view);
-        void setProgressDialog (Context context);
+        void setProgressDialog ();
     }
     interface View{
         void setData(List<Country> countryList);
         void showLoadMore();
+        void showProgressDialog();
+        void hideProgressDialog();
     }
     interface Model{
         interface OnDataLoaded{

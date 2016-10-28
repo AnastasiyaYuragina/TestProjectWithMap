@@ -57,9 +57,7 @@ public class MainActivity extends AppCompatActivity implements CountryFragment.O
 
         manager = getSupportFragmentManager();
 
-        if (manager.findFragmentByTag(FragmentType.MAP.name()) != null) {
-            replaceFragment(FragmentType.MAP);
-        } else {
+        if (savedInstanceState == null) {
             replaceFragment(FragmentType.COUNTRY_LIST);
         }
 
@@ -118,8 +116,6 @@ public class MainActivity extends AppCompatActivity implements CountryFragment.O
 
         FragmentTransaction transaction = manager.beginTransaction();
         if (type.equals(FragmentType.COUNTRY_LIST)) {
-            transaction.replace(R.id.container, fragment, type.name()).commit();
-        } else if (type.equals(FragmentType.MAP)) {
             transaction.replace(R.id.container, fragment, type.name()).commit();
         }
     }
