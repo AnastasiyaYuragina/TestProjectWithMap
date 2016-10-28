@@ -159,9 +159,12 @@ public class MapFragment extends Fragment implements MapMvp.ViewMap{
         builder.append(mapInfo.getName()).append(", ")
                 .append(mapInfo.getRegion()).append(", ")
                 .append(mapInfo.getSubregion()).append(", ")
-                .append("population: ").append(mapInfo.getPopulation()).append(", ")
-                .append("area: ").append(mapInfo.getArea()).append(", ")
-                .append("languages: ").append(languageBuilder.toString());
+                .append(getString(R.string.country_population))
+                .append(mapInfo.getPopulation()).append(", ")
+                .append(getString(R.string.country_area))
+                .append(mapInfo.getArea()).append(", ")
+                .append(getString(R.string.country_languages))
+                .append(languageBuilder.toString());
 
         return builder;
     }

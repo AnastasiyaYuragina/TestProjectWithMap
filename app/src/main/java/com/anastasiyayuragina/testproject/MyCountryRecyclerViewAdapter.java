@@ -58,14 +58,17 @@ public class MyCountryRecyclerViewAdapter extends RecyclerView.Adapter<MyCountry
         Country viewModel = countryList.get(position);
 
         if (viewModel.getComment() != null && !viewModel.getComment().isEmpty()) {
-            holder.comment.setText("Comment: " + viewModel.getComment());
+            holder.comment.setText(holder.view.getResources()
+                    .getString(R.string.comment, viewModel.getComment()));
         } else {
             holder.comment.setText("");
         }
 
         holder.country = viewModel;
-        holder.countryName.setText("Country: " + viewModel.getName());
-        holder.countryRegion.setText("Region: " + viewModel.getRegion().getValue());
+        holder.countryName.setText(holder.view.getResources()
+                .getString(R.string.country_name, viewModel.getName()));
+        holder.countryRegion.setText(holder.view.getResources()
+                .getString(R.string.region_name, viewModel.getRegion().getValue()));
         holder.view.setOnClickListener(v -> {
             if (null != listener) {
                 // Notify the active callbacks interface (the activity, if the

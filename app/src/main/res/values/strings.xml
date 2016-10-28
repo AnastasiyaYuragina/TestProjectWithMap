@@ -4,7 +4,11 @@
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="enter_comment">Enter comment</string>
     <string name="add_comment">Add comment</string>
-    <string name="country_name">Country: </string>
-    <string name="region_name">Region: </string>
+    <string name="country_name">Country: %1$s</string>
+    <string name="region_name">Region: %1$s</string>
+    <string name="comment">Comment: %1$s</string>
     <string name="update_list_button">Update</string>
+    <string name="country_area">Area: </string>
+    <string name="country_population">Population: </string>
+    <string name="country_languages">Languages: </string>
 </resources>
