@@ -54,6 +54,7 @@ public class CountryFragment extends Fragment implements CountriesMvp.View {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_country_list, container, false);
 
+
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
             adapter = new MyCountryRecyclerViewAdapter(listener);

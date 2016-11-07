@@ -10,6 +10,8 @@ import com.anastasiyayuragina.testproject.jsonCountriesClasses.Country;
 import com.anastasiyayuragina.testproject.screen.country_list.CountryFragment;
 import java.util.ArrayList;
 import java.util.List;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class MyCountryRecyclerViewAdapter extends RecyclerView.Adapter<MyCountryRecyclerViewAdapter.ViewHolder> {
     private static final int ITEM_TYPE_COUNTRY = 0;
@@ -90,19 +92,17 @@ public class MyCountryRecyclerViewAdapter extends RecyclerView.Adapter<MyCountry
         new Handler().post(this::notifyDataSetChanged);
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
-        final View view;
-        final TextView countryName;
-        final TextView countryRegion;
+    static class ViewHolder extends RecyclerView.ViewHolder {
+        View view;
         Country country;
-        final TextView comment;
+        @BindView(R.id.county_name) TextView countryName;
+        @BindView(R.id.country_region) TextView countryRegion;
+        @BindView(R.id.show_comment) TextView comment;
 
         ViewHolder(View view) {
             super(view);
             this.view = view;
-            countryName = (TextView) view.findViewById(R.id.county_name);
-            countryRegion = (TextView) view.findViewById(R.id.country_region);
-            comment = (TextView) view.findViewById(R.id.show_comment);
+            ButterKnife.bind(this, view);
         }
 
         @Override

@@ -17,6 +17,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.List;
 import java.util.Locale;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by anastasiya yuragina on 8/5/16.
@@ -27,13 +29,13 @@ public class MapFragment extends Fragment implements MapMvp.ViewMap{
     private static final String LATITUDE = "latitude";
     private static final String LONGITUDE = "longitude";
     private static final String COUNTRY_ID = "id_country";
-    private  MapView mapView;
+    @BindView(R.id.map)  MapView mapView;
+    @BindView(R.id.about_country) TextView countryInfo;
+    @BindView(R.id.editComment) EditText comment;
     private String countryName;
     private double latitude;
     private double longitude;
     private String countryId;
-    private TextView countryInfo;
-    private EditText comment;
     private MapMvp.PresenterMap presenterMap;
 
     public static MapFragment newInstance(String countryName, String latitude, String longitude, String id) {
@@ -71,9 +73,10 @@ public class MapFragment extends Fragment implements MapMvp.ViewMap{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.map_fragment, container, false);
-        mapView = (MapView) view.findViewById(R.id.map);
-        countryInfo = (TextView) view.findViewById(R.id.about_country);
-        comment = (EditText) view.findViewById(R.id.editComment);
+        ButterKnife.bind(this, view);
+//        mapView = (MapView) view.findViewById(R.id.map);
+//        countryInfo = (TextView) view.findViewById(R.id.about_country);
+//        comment = (EditText) view.findViewById(R.id.editComment);
 
         presenterMap.initCountry(countryName);
         presenterMap.loadData();
