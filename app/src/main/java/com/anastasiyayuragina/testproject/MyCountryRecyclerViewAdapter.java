@@ -2,6 +2,7 @@ package com.anastasiyayuragina.testproject;
 
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MyCountryRecyclerViewAdapter extends RecyclerView.Adapter<MyCountryRecyclerViewAdapter.ViewHolder> {
+    String TAG = "MyLOgs";
+
     private static final int ITEM_TYPE_COUNTRY = 0;
     private static final int ITEM_TYPE_LOADING = 1;
     private final List<Country> countryList = new ArrayList<>();
@@ -92,8 +95,8 @@ public class MyCountryRecyclerViewAdapter extends RecyclerView.Adapter<MyCountry
         new Handler().post(this::notifyDataSetChanged);
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
-        View view;
+    class ViewHolder extends RecyclerView.ViewHolder {
+        final View view;
         Country country;
         @BindView(R.id.county_name) TextView countryName;
         @BindView(R.id.country_region) TextView countryRegion;
@@ -102,7 +105,12 @@ public class MyCountryRecyclerViewAdapter extends RecyclerView.Adapter<MyCountry
         ViewHolder(View view) {
             super(view);
             this.view = view;
-            ButterKnife.bind(this, view);
+
+            try {
+                ButterKnife.bind(this, view);
+            } catch (Exception e) {
+                Log.d(TAG, "ViewHolder: progress view");
+            }
         }
 
         @Override

@@ -11,10 +11,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.anastasiyayuragina.testproject.EndlessRecyclerOnScrollListener;
+import com.anastasiyayuragina.testproject.InternetConnectionObservable;
 import com.anastasiyayuragina.testproject.jsonCountriesClasses.Country;
 import com.anastasiyayuragina.testproject.MyCountryRecyclerViewAdapter;
 import com.anastasiyayuragina.testproject.R;
 import java.util.List;
+import java.util.Observer;
 
 /**
  * A fragment representing a list of Items.
@@ -83,12 +85,14 @@ public class CountryFragment extends Fragment implements CountriesMvp.View {
         super.onStart();
         presenter.setView(this);
         presenter.setProgressDialog();
+        InternetConnectionObservable.getInstance().addObserver((Observer) presenter);
     }
 
     @Override
     public void onStop() {
         super.onStop();
         presenter.onStop();
+        InternetConnectionObservable.getInstance().deleteObservers();
     }
 
     @Override

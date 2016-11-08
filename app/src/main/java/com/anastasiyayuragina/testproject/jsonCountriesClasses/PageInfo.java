@@ -2,12 +2,18 @@ package com.anastasiyayuragina.testproject.jsonCountriesClasses;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import com.anastasiyayuragina.testproject.ourDataBase.CountriesDatabase;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.raizlabs.android.dbflow.annotation.Column;
+import com.raizlabs.android.dbflow.annotation.PrimaryKey;
+import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.structure.BaseModel;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 //@Generated("org.jsonschema2pojo")
@@ -17,16 +23,25 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "per_page",
     "total"
 })
-public class PageInfo {
+@Table(database = CountriesDatabase.class)
+public class PageInfo extends BaseModel {
 
+    @PrimaryKey
     @JsonProperty("page")
     private Integer page;
+
+    @Column
     @JsonProperty("pages")
     private Integer pages;
+
+    @Column
     @JsonProperty("per_page")
     private String perPage;
+
+    @Column
     @JsonProperty("total")
     private Integer total;
+
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<>();
 

@@ -1,6 +1,5 @@
 package com.anastasiyayuragina.testproject.screen.country_list;
 
-import com.anastasiyayuragina.testproject.InternetConnectionObservable;
 import com.anastasiyayuragina.testproject.jsonCountriesClasses.PageInfo;
 import com.anastasiyayuragina.testproject.jsonCountriesClasses.Country;
 import java.util.List;
@@ -20,7 +19,6 @@ class CountriesPresenter implements CountriesMvp.Presenter, CountriesMvp.Model.O
 
     CountriesPresenter() {
         this.model = new CountriesModel();
-        InternetConnectionObservable.getInstance().addObserver(this);
     }
 
     @Override
@@ -44,7 +42,6 @@ class CountriesPresenter implements CountriesMvp.Presenter, CountriesMvp.Model.O
         view.hideProgressDialog();
         view = null;
         pageInfo = null;
-        InternetConnectionObservable.getInstance().deleteObservers();
     }
 
     @Override

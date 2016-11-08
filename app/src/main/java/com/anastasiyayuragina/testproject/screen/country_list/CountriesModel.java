@@ -5,6 +5,7 @@ import com.anastasiyayuragina.testproject.ServiceSingleton;
 import com.anastasiyayuragina.testproject.jsonCountriesClasses.Country;
 import com.anastasiyayuragina.testproject.jsonCountriesClasses.Country_Table;
 import com.anastasiyayuragina.testproject.jsonCountriesClasses.PageInfo;
+import com.anastasiyayuragina.testproject.jsonCountriesClasses.PageInfo_Table;
 import com.anastasiyayuragina.testproject.jsonCountriesClasses.Region;
 import com.anastasiyayuragina.testproject.ourDataBase.CountryItem;
 import com.raizlabs.android.dbflow.sql.language.Select;
@@ -19,7 +20,7 @@ import rx.schedulers.Schedulers;
  *
  */
 class CountriesModel implements CountriesMvp.Model {
-    private PageInfo pageInfo;
+    private PageInfo pageInfo1;
 
     @Override
     public void loadData(final int page, final OnDataLoaded listener) {
@@ -30,7 +31,7 @@ class CountriesModel implements CountriesMvp.Model {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         countryItem -> {
-                            listener.onDataLoaded(countryItem.getCountryList(), pageInfo);
+                            listener.onDataLoaded(countryItem.getCountryList(), pageInfo1);
                         },
                         listener::onError);
     }
@@ -39,10 +40,8 @@ class CountriesModel implements CountriesMvp.Model {
         return Observable.fromCallable(() -> {
             List<Country> countryList = new Select().from(Country.class)
                     .where(Country_Table.page.is(page)).queryList();
+            pageInfo1 = new Select().from(PageInfo.class).where(PageInfo_Table.page.is(page)).querySingle();
             CountryItem countryItem = new CountryItem();
-            countryItem.setPageInfo(new PageInfo());
-            countryItem.getPageInfo().setPage(page);
-            countryItem.getPageInfo().setPages(page + 1);
             countryItem.setCountryList(countryList);
             return countryItem;
         }).subscribeOn(Schedulers.io());
@@ -53,10 +52,10 @@ class CountriesModel implements CountriesMvp.Model {
         return ServiceSingleton.getInstance()
                 .getAPIServices()
                 .loadCountryItem(pageParam(String.valueOf(page)))
-                .doOnNext(countryItem -> saveIntoDB(countryItem.getCountryList(), page))
+                .doOnNext(this::saveIntoDB)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(countryItem -> pageInfo = countryItem.getPageInfo());
+                .doOnNext(countryItem -> pageInfo1 = countryItem.getPageInfo());
     }
 
     private Map<String, String> pageParam(String page) {
@@ -68,9 +67,15 @@ class CountriesModel implements CountriesMvp.Model {
         return urlParams;
     }
 
-    private void saveIntoDB (List<Country> itemCountry, int page) {
+    private void saveIntoDB (CountryItem itemCountry) {
+        PageInfo pageInfo = new PageInfo();
+        pageInfo.setPage(itemCountry.getPageInfo().getPage());
+        pageInfo.setPages(itemCountry.getPageInfo().getPages());
+        pageInfo.setPerPage(itemCountry.getPageInfo().getPerPage());
+        pageInfo.setTotal(itemCountry.getPageInfo().getTotal());
+        pageInfo.save();
 
-        for (Country countries : itemCountry) {
+        for (Country countries : itemCountry.getCountryList()) {
             Country country = new Country();
             Region region = new Region();
 
@@ -83,7 +88,7 @@ class CountriesModel implements CountriesMvp.Model {
             country.setRegion(region);
             country.setLatitude(countries.getLatitude());
             country.setLongitude(countries.getLongitude());
-            country.setPage(page);
+            country.setPage(pageInfo.getPage());
             country.save();
         }
     }
