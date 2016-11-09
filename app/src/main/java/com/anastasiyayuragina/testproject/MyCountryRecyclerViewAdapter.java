@@ -2,7 +2,6 @@ package com.anastasiyayuragina.testproject;
 
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +14,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MyCountryRecyclerViewAdapter extends RecyclerView.Adapter<MyCountryRecyclerViewAdapter.ViewHolder> {
-    String TAG = "MyLOgs";
-
     private static final int ITEM_TYPE_COUNTRY = 0;
     private static final int ITEM_TYPE_LOADING = 1;
     private final List<Country> countryList = new ArrayList<>();
@@ -39,14 +36,14 @@ public class MyCountryRecyclerViewAdapter extends RecyclerView.Adapter<MyCountry
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 
         if(viewType == ITEM_TYPE_COUNTRY){
-             view = inflater.inflate(R.layout.fragment_country, parent, false);
+            view = inflater.inflate(R.layout.fragment_country, parent, false);
         }else if(viewType == ITEM_TYPE_LOADING){
             view = inflater.inflate(R.layout.progress_bar_item, parent, false);
         }else {
             throw new IllegalArgumentException("Wrong view type");
         }
 
-        return new ViewHolder(view);
+        return new ViewHolder(view, viewType);
     }
 
     @Override
@@ -102,14 +99,12 @@ public class MyCountryRecyclerViewAdapter extends RecyclerView.Adapter<MyCountry
         @BindView(R.id.country_region) TextView countryRegion;
         @BindView(R.id.show_comment) TextView comment;
 
-        ViewHolder(View view) {
+        ViewHolder(View view, int type) {
             super(view);
             this.view = view;
 
-            try {
+            if (type == ITEM_TYPE_COUNTRY) {
                 ButterKnife.bind(this, view);
-            } catch (Exception e) {
-                Log.d(TAG, "ViewHolder: progress view");
             }
         }
 
