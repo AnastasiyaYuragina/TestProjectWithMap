@@ -1,26 +1,25 @@
 package com.anastasiyayuragina.testproject;
 
+import android.content.Context;
 import android.os.Handler;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 import com.anastasiyayuragina.testproject.jsonCountriesClasses.Country;
 import com.anastasiyayuragina.testproject.screen.country_list.CountryFragment;
+import com.hannesdorfmann.annotatedadapter.annotation.ViewField;
+import com.hannesdorfmann.annotatedadapter.annotation.ViewType;
+import com.hannesdorfmann.annotatedadapter.support.recyclerview.SupportAnnotatedAdapter;
 import java.util.ArrayList;
 import java.util.List;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
-public class MyCountryRecyclerViewAdapter extends RecyclerView.Adapter<MyCountryRecyclerViewAdapter.ViewHolder> {
+public class MyCountryRecyclerViewAdapter extends SupportAnnotatedAdapter implements MyCountryRecyclerViewAdapterBinder {
     private static final int ITEM_TYPE_COUNTRY = 0;
     private static final int ITEM_TYPE_LOADING = 1;
     private final List<Country> countryList = new ArrayList<>();
     private final CountryFragment.OnListFragmentInteractionListener listener;
     private boolean loading;
 
-    public MyCountryRecyclerViewAdapter(CountryFragment.OnListFragmentInteractionListener listener) {
+    public MyCountryRecyclerViewAdapter(Context context, CountryFragment.OnListFragmentInteractionListener listener) {
+        super(context);
         this.listener = listener;
     }
 
@@ -30,60 +29,30 @@ public class MyCountryRecyclerViewAdapter extends RecyclerView.Adapter<MyCountry
         notifyDataSetChanged();
     }
 
-    @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view;
-        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-
-        if(viewType == ITEM_TYPE_COUNTRY){
-            view = inflater.inflate(R.layout.fragment_country, parent, false);
-        }else if(viewType == ITEM_TYPE_LOADING){
-            view = inflater.inflate(R.layout.progress_bar_item, parent, false);
-        }else {
-            throw new IllegalArgumentException("Wrong view type");
-        }
-
-        return new ViewHolder(view, viewType);
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        return countryList.size() == position ? ITEM_TYPE_LOADING : ITEM_TYPE_COUNTRY;
-    }
-
-    @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
-        if(getItemViewType(position) == ITEM_TYPE_LOADING) {
-            return;
-        }
-
-        Country viewModel = countryList.get(position);
-
-        if (viewModel.getComment() != null && !viewModel.getComment().isEmpty()) {
-            holder.comment.setText(holder.view.getResources()
-                    .getString(R.string.comment, viewModel.getComment()));
-        } else {
-            holder.comment.setText("");
-        }
-
-        holder.country = viewModel;
-        holder.countryName.setText(holder.view.getResources()
-                .getString(R.string.country_name, viewModel.getName()));
-        holder.countryRegion.setText(holder.view.getResources()
-                .getString(R.string.region_name, viewModel.getRegion().getValue()));
-        holder.view.setOnClickListener(v -> {
-            if (null != listener) {
-                // Notify the active callbacks interface (the activity, if the
-                // fragment is attached to one) that an item has been selected.
-                listener.onListFragmentInteraction(holder.country);
+    @ViewType(
+            layout = R.layout.fragment_country,
+            views = {
+                    @ViewField(id = R.id.county_name, name = "countryName", type = TextView.class),
+                    @ViewField(id = R.id.country_region, name = "countryRegion", type = TextView.class),
+                    @ViewField(id = R.id.show_comment, name = "comment", type = TextView.class)
             }
-        });
-    }
+    )
+    public final int itemTypeCountry = ITEM_TYPE_COUNTRY;
+
+    @ViewType(
+            layout = R.layout.progress_bar_item
+    )
+    public final int itemTypeLoading = ITEM_TYPE_LOADING;
 
     @Override
     public int getItemCount() {
         int size = countryList.size();
         return loading ? size + 1 : size;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return countryList.size() == position ? ITEM_TYPE_LOADING : ITEM_TYPE_COUNTRY;
     }
 
     public void setLoading(boolean loading) {
@@ -92,25 +61,30 @@ public class MyCountryRecyclerViewAdapter extends RecyclerView.Adapter<MyCountry
         new Handler().post(this::notifyDataSetChanged);
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
-        final View view;
-        Country country;
-        @BindView(R.id.county_name) TextView countryName;
-        @BindView(R.id.country_region) TextView countryRegion;
-        @BindView(R.id.show_comment) TextView comment;
+    @Override
+    public void bindViewHolder(MyCountryRecyclerViewAdapterHolders.ItemTypeCountryViewHolder vh, int position) {
+        Country viewModel = countryList.get(position);
 
-        ViewHolder(View view, int type) {
-            super(view);
-            this.view = view;
+        if (viewModel.getComment() != null && !viewModel.getComment().isEmpty()) {
+            vh.comment.setText(vh.itemView.getResources()
+                    .getString(R.string.comment, viewModel.getComment()));
+        } else {
+            vh.comment.setText("");
+        }
 
-            if (type == ITEM_TYPE_COUNTRY) {
-                ButterKnife.bind(this, view);
+        vh.countryName.setText(vh.itemView.getResources()
+                .getString(R.string.country_name, viewModel.getName()));
+        vh.countryRegion.setText(vh.itemView.getResources()
+                .getString(R.string.region_name, viewModel.getRegion().getValue()));
+        vh.itemView.setOnClickListener(v -> {
+            if (null != listener) {
+                listener.onListFragmentInteraction(viewModel);
             }
-        }
+        });
+    }
 
-        @Override
-        public java.lang.String toString() {
-            return super.toString() + " '" + countryRegion.getText() + "'";
-        }
+    @Override
+    public void bindViewHolder(MyCountryRecyclerViewAdapterHolders.ItemTypeLoadingViewHolder vh, int position) {
+
     }
 }

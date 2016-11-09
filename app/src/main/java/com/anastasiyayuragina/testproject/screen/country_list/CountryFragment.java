@@ -59,7 +59,7 @@ public class CountryFragment extends Fragment implements CountriesMvp.View {
 
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
-            adapter = new MyCountryRecyclerViewAdapter(listener);
+            adapter = new MyCountryRecyclerViewAdapter(context, listener);
             RecyclerView recyclerView = (RecyclerView) view;
             RecyclerView.LayoutManager layoutManager = mColumnCount <= 1 ? new LinearLayoutManager(context)
                     : new GridLayoutManager(context, mColumnCount);
